@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parcul Natural Bucegi — Hartă Interactivă</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* Your existing CSS styles remain exactly the same */
+    :root {
+      --forest:       #1a3a2a;
+      --canopy:       #2d5a3d;
+      --moss:         #4a7c59;
+      --fern:         #6b9e78;
+      --sage:         #a8c5a0;
+      --mist:         #e8f0e4;
+      --stone:        #9eada8;
+      --water:        #4a8fa8;
+      --gold:         #d4a843;
+      --cream:        #f5f0e8;
+      --panel-bg:     rgba(15, 30, 20, 0.88);
+      --panel-border: rgba(107, 158, 120, 0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--forest); overflow: hidden; }
+    #map { width: 100vw; height: 100vh; }
+
+    /* ── Header ── */
+    #header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: linear-gradient(180deg, rgba(10,25,15,0.95) 0%, rgba(10,25,15,0) 100%);
+      pointer-events: none;
+    }
+
+    #header-title { display: flex; align-items: center; gap: 12px; }
+    #header-title img { width: 48px; height: 40px; filter: drop-shadow(0 0 4px rgba(74,124,89,0.8)); }
+    #header-text { display: flex; flex-direction: column; }
+
+    #header-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--cream);
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+    }
+
+    #header-text span {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fern);
+    }
+
+    #header-right { display: flex; align-items: center; gap: 14px; pointer-events: all; }
+
+    #header-status { display: flex; align-items: center; gap: 7px; font-size: 0.7rem; color: var(--sage); font-weight: 300; }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #5ecf7a; box-shadow: 0 0 8px #5ecf7a;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* ── Language toggle ── */
+    #lang-toggle {
+      display: flex;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .lang-btn {
+      padding: 5px 12px;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--stone);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .lang-btn.active { background: rgba(107, 158, 120, 0.3); color: var(--cream); }
+    .lang-btn:hover:not(.active) { color: var(--sage); }
+
+    /* ── Dashboard ── */
+    #dashboard {
+      position: absolute;
+      top: 68px; left: 20px;
+      z-index: 1000;
+      width: 300px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      max-height: calc(100vh - 120px);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    #dashboard-header {
+      padding: 12px 16px 8px;
+      border-bottom: 1px solid var(--panel-border);
+      background: rgba(45, 90, 61, 0.2);
+    }
+
+    #dashboard-header .park-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--cream); font-style: italic; }
+    #dashboard-header .park-subtitle { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fern); margin-top: 2px; }
+
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--panel-border); border-bottom: 1px solid var(--panel-border); }
+
+    .kpi-cell { background: rgba(15, 30, 20, 0.9); padding: 10px 14px; transition: background 0.2s; }
+    .kpi-cell:hover { background: rgba(45, 90, 61, 0.3); }
+
+    .kpi-value { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--cream); line-height: 1; }
+    .kpi-value span { font-size: 0.7rem; color: var(--fern); font-family: 'DM Sans', sans-serif; }
+    .kpi-label { font-size: 0.59rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); margin-top: 3px; }
+    .kpi-trend { font-size: 0.59rem; color: #5ecf7a; margin-top: 2px; }
+
+    #dashboard-info { padding: 10px 16px; }
+    #dashboard-info p { font-size: 0.7rem; color: var(--sage); line-height: 1.6; font-weight: 300; }
+
+    /* ── Layer panel ── */
+    #layer-panel {
+      position: absolute;
+      bottom: 100px; right: 20px;
+      z-index: 1000;
+      width: 225px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      animation: slideInRight 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    #layer-panel-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 0.63rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fern);
+      background: rgba(45, 90, 61, 0.2);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    .layer-group {
+      padding: 6px 14px 3px;
+      font-size: 0.57rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--moss);
+      background: rgba(45, 90, 61, 0.1);
+      border-bottom: 1px solid rgba(107, 158, 120, 0.06);
+    }
+
+    .layer-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(107, 158, 120, 0.07);
+    }
+
+    .layer-item:last-child { border-bottom: none; }
+    .layer-item:hover { background: rgba(45, 90, 61, 0.25); }
+
+    .layer-toggle {
+      width: 15px; height: 15px; border-radius: 3px;
+      border: 1.5px solid var(--panel-border);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .layer-item.active .layer-toggle { border-color: var(--fern); background: rgba(107, 158, 120, 0.3); }
+
+    .layer-item.active .layer-toggle::after {
+      content: '';
+      width: 7px; height: 4px;
+      border-left: 2px solid var(--fern);
+      border-bottom: 2px solid var(--fern);
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+
+    .layer-swatch { width: 18px; height: 4px; border-radius: 2px; flex-shrink: 0; }
+    .layer-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin: 0 4px; }
+    .layer-dash { width: 20px; height: 0; border-top: 3px dashed; flex-shrink: 0; }
+    .layer-label { font-size: 0.71rem; color: var(--mist); font-weight: 400; flex: 1; }
+
+    .layer-loading { font-size: 0.58rem; color: var(--gold); margin-left: auto; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Legend ── */
+    #legend {
+      position: absolute;
+      bottom: 40px; left: 20px;
+      z-index: 1000;
+      width: 250px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      max-height: calc(100vh - 180px);
+      border-radius: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      animation: slideIn 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    #legend-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--fern); background: rgba(45, 90, 61, 0.2);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 9px; padding: 7px 14px; border-bottom: 1px solid rgba(107, 158, 120, 0.07); }
+    .legend-item:last-child { border-bottom: none; }
+
+    .legend-icon { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+    .legend-line { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+    .legend-dash { width: 20px; height: 0; border-top: 3px dashed; flex-shrink: 0; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin: 0 5px; }
+    .legend-box  { width: 20px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .legend-label { font-size: 0.68rem; color: var(--sage); font-weight: 300; }
+
+    /* ── Coords ── */
+    #coords-bar {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      z-index: 1000;
+      background: var(--panel-bg); border: 1px solid var(--panel-border);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 0.63rem; color: var(--stone); letter-spacing: 0.08em;
+      backdrop-filter: blur(8px); pointer-events: none; white-space: nowrap;
+    }
+
+    /* ── Error toast ── */
+    #error-toast {
+      position: absolute; top: 72px; right: 20px; z-index: 2000;
+      background: rgba(60, 20, 10, 0.92); border: 1px solid rgba(232, 115, 74, 0.4);
+      border-radius: 8px; padding: 10px 16px; font-size: 0.72rem; color: #f0a080;
+      max-width: 260px; display: none; backdrop-filter: blur(8px);
+    }
+
+    /* ── Popups ── */
+    .leaflet-popup-content-wrapper {
+      background: rgba(15, 30, 20, 0.95) !important;
+      border: 1px solid var(--panel-border) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+      color: var(--cream) !important;
+      font-family: 'DM Sans', sans-serif !important;
+      backdrop-filter: blur(12px);
+    }
+
+    .leaflet-popup-tip { background: rgba(15, 30, 20, 0.95) !important; }
+    .leaflet-popup-content { margin: 12px 16px !important; font-size: 0.78rem !important; line-height: 1.6 !important; }
+
+    .popup-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--cream); margin-bottom: 5px; }
+
+    .popup-tag {
+      display: inline-block; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--fern); background: rgba(107, 158, 120, 0.15);
+      border: 1px solid rgba(107, 158, 120, 0.3); border-radius: 3px;
+      padding: 2px 7px; margin-bottom: 8px;
+    }
+
+    .popup-row { display: flex; justify-content: space-between; color: var(--stone); font-size: 0.7rem; padding: 3px 0; border-bottom: 1px solid rgba(107, 158, 120, 0.1); }
+    .popup-row:last-child { border-bottom: none; }
+    .popup-row strong { color: var(--mist); }
+
+    /* ── Leaflet overrides ── */
+    .leaflet-control-zoom { border: 1px solid var(--panel-border) !important; border-radius: 8px !important; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important; }
+    .leaflet-control-zoom a { background: var(--panel-bg) !important; color: var(--fern) !important; border-bottom: 1px solid var(--panel-border) !important; backdrop-filter: blur(8px); font-size: 1rem !important; line-height: 26px !important; width: 28px !important; height: 28px !important; }
+    .leaflet-control-zoom a:hover { background: rgba(45, 90, 61, 0.5) !important; color: var(--cream) !important; }
+    .leaflet-control-attribution { background: rgba(10, 20, 14, 0.7) !important; color: var(--stone) !important; font-size: 0.6rem !important; backdrop-filter: blur(4px); border-radius: 4px 0 0 0 !important; }
+    .leaflet-control-attribution a { color: var(--fern) !important; }
+
+    /* ── Loading ── */
+    #loading {
+      position: absolute; inset: 0; z-index: 9999; background: var(--forest);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; transition: opacity 0.8s ease;
+    }
+
+    #loading.hidden { opacity: 0; pointer-events: none; }
+    .loading-icon { font-size: 2.5rem; animation: sway 2s ease-in-out infinite; }
+
+    @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+    .loading-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--sage); font-style: italic; letter-spacing: 0.05em; }
+    .loading-bar { width: 120px; height: 2px; background: rgba(107, 158, 120, 0.2); border-radius: 1px; overflow: hidden; }
+    .loading-bar-fill { height: 100%; background: var(--fern); border-radius: 1px; animation: load 1.5s ease forwards; }
+
+    @keyframes load { from { width: 0; } to { width: 100%; } }
+
+    /* ── Mobile bottom nav ── */
+    #mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 1100;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--panel-border);
+      backdrop-filter: blur(12px);
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+      justify-content: space-around;
+    }
+
+    .mob-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; cursor: pointer;
+      color: var(--stone); font-family: 'DM Sans', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.05em; padding: 4px 16px;
+      transition: color 0.2s;
+    }
+
+    .mob-btn.active { color: var(--fern); }
+    .mob-btn svg { width: 20px; height: 20px; }
+
+    /* ── Mobile drawer ── */
+    #mobile-drawer {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 1050;
+      background: rgba(12, 24, 16, 0.97);
+      border-top: 1px solid var(--panel-border);
+      border-radius: 16px 16px 0 0;
+      backdrop-filter: blur(16px);
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    #mobile-drawer.open { transform: translateY(0); }
+
+    #drawer-handle {
+      width: 36px; height: 4px;
+      background: var(--panel-border);
+      border-radius: 2px;
+      margin: 10px auto 0;
+    }
+
+    #drawer-close {
+      position: absolute; top: 10px; right: 16px;
+      background: none; border: none; color: var(--stone);
+      font-size: 1.2rem; cursor: pointer; line-height: 1;
+    }
+
+    #drawer-content { padding: 16px; }
+
+    /* ── Mobile overlay ── */
+    #drawer-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      z-index: 1040;
+      background: rgba(0,0,0,0.4);
+    }
+
+    /* ── Responsive breakpoint ── */
+    @media (max-width: 640px) {
+
+      #mobile-nav    { display: flex; }
+      #mobile-drawer { display: block; }
+
+      /* Hide desktop panels */
+      #dashboard, #layer-panel, #legend { display: none !important; }
+
+      /* Compact header */
+      #header { padding: 8px 12px; }
+      #header-title img { width: 32px; height: 28px; }
+      #header-text h1 { font-size: 0.95rem; }
+      #header-text span { display: none; }
+      #header-status span { display: none; }
+      #status-text { display: none; }
+
+      /* Push map content above bottom nav */
+      #map { height: calc(100vh - 60px); }
+      #coords-bar { bottom: 68px; font-size: 0.58rem; }
+      #error-toast { top: 56px; }
+
+      .leaflet-control-zoom { margin-bottom: 70px !important; }
+
+      /* Drawer KPI grid — 2 cols on mobile */
+      .mob-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+
+      .mob-kpi-cell {
+        background: rgba(45, 90, 61, 0.15);
+        border: 1px solid var(--panel-border);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+
+      .mob-kpi-value { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--cream); line-height: 1; }
+      .mob-kpi-value span { font-size: 0.65rem; color: var(--fern); font-family: 'DM Sans', sans-serif; }
+      .mob-kpi-label { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone); margin-top: 3px; }
+
+      .mob-section-title {
+        font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+        color: var(--fern); margin: 14px 0 8px;
+      }
+
+      .mob-info {
+        font-size: 0.72rem; color: var(--sage); line-height: 1.6;
+        font-weight: 300; margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-icon"><img src="https://bucegipark.ro/static/img/logo/bucegi_logo.e26de97102fa.png" style="width:100%; height:50%;" alt="Bucegi logo"/></div>
+  <div class="loading-text" id="loading-text">Se încarcă harta Parcului Natural Bucegi…</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+</div>
+
+<div id="map"></div>
+
+<!-- Header -->
+<div id="header">
+  <div id="header-title">
+    <img src="https://bucegipark.ro/static/img/logo/bucegi_logo.e26de97102fa.png" alt="Bucegi logo"/>
+    <div id="header-text">
+      <h1 id="header-h1">Parcul Natural Bucegi</h1>
+      <span id="header-sub">Hartă Interactivă</span>
+    </div>
+  </div>
+  <div id="header-right">
+    <div id="header-status">
+      <div class="status-dot"></div>
+      <span id="status-text">Parc Deschis · Date live</span>
+    </div>
+    <div id="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('ro')">RO</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div id="dashboard-header">
+    <div class="park-name" id="db-title">Prezentare Parc</div>
+    <div class="park-subtitle" id="db-subtitle">Condiții actuale</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-cell">
+      <div class="kpi-value">32,520<span> ha</span></div>
+      <div class="kpi-label" id="kpi-area">Suprafață</div>
+      <div class="kpi-trend" id="kpi-trend-1">▲ Zonă protejată</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-value">21,369<span> ha</span></div>
+      <div class="kpi-label" id="kpi-forest">Fond forestier</div>
+      <div class="kpi-trend" id="kpi-trend-2">▲ ~30% cu statut de protecție</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-value">1,200+</div>
+      <div class="kpi-label" id="kpi-species">Specii floră</div>
+      <div class="kpi-trend" id="kpi-trend-3">▲ 100 endemice</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-value">316<span> km</span></div>
+      <div class="kpi-label" id="kpi-trails">Trasee marcate</div>
+      <div class="kpi-trend" id="kpi-trend-4">● Accesibile</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-value">~100</div>
+      <div class="kpi-label" id="kpi-bears">Ursus arctos</div>
+      <div class="kpi-trend" id="kpi-trend-5" style="color:#e8a84a;">⚠ Populație în creștere</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-value">2,505<span> m</span></div>
+      <div class="kpi-label" id="kpi-peak">Altitudine maximă</div>
+      <div class="kpi-trend" id="kpi-trend-6">▲ Vf. Omu</div>
+    </div>
+  </div>
+  <div id="dashboard-info">
+    <p id="db-info">Activați straturile pentru a explora traseele, zonarea și infrastructura parcului.</p>
+  </div>
+</div>
+
+<!-- Layer panel -->
+<div id="layer-panel">
+  <div id="layer-panel-header">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b9e78" stroke-width="2">
+      <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+      <polyline points="2 17 12 22 22 17"/>
+      <polyline points="2 12 12 17 22 12"/>
+    </svg>
+    <span id="layers-title">Straturi hartă</span>
+  </div>
+
+  <div class="layer-group" id="grp-limits">Limite și zonare</div>
+  <div class="layer-item active" data-layer="park_boundary" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#e8734a;"></div>
+    <span class="layer-label" data-ro="Limita parcului" data-en="Park Boundary">Limita parcului</span>
+  </div>
+  <div class="layer-item" data-layer="zoning" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-swatch" style="background:#7b9e6b; opacity:0.8;"></div>
+    <span class="layer-label" data-ro="Zonare parc, H.G. 187/2011" data-en="Park Zoning, H.G. 187/2011">Zonare parc, H.G. 187/2011</span>
+  </div>
+  <div class="layer-item active" data-layer="ROSCI0013" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Sit Natura 2000" data-en="Natura 2000 Site">Sit Natura 2000</span>
+  </div>
+  <div class="layer-group" id="grp-reserves">Rezervații naturale</div>
+  <div class="layer-item" data-layer="reservesoug49" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="background:#000000; opacity:0.8;"></div>
+    <span class="layer-label" data-ro="Rezervații naturale conform OUG nr. 49 / 2016" data-en="Natural reserves according to OUG no. 49 / 2016">Rezervații naturale conform OUG nr. 49 / 2016</span>
+  </div>
+  <div class="layer-item" data-layer="reservesapnbproposal" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-swatch" style="background:#0432b1; opacity:0.8;"></div>
+    <span class="layer-label" data-ro="Rezervații naturale propuse APN BUCEGI" data-en="Natural reserves proposed by APN BUCEGI">Rezervații naturale propuse APN BUCEGI</span>
+  </div>
+  <div class="layer-group" id="grp-veg">Vegetație</div>
+  <div class="layer-item" data-layer="forest" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-swatch" style="background:#093117; opacity:0.9;"></div>
+    <span class="layer-label" data-ro="Acoperire forestieră" data-en="Forest Cover">Acoperire forestieră</span>
+  </div>
+
+  <div class="layer-item active" data-layer="admin" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dot" style="background:#a8c5a0;"></div>
+    <span class="layer-label" data-ro="Administrație / Centre de informare" data-en="Admin / Info Centers">Administrație / Centre de informare</span>
+  </div>
+
+  <div class="layer-item" data-layer="infrastructura_agrement" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div style="display:flex;flex-direction:column;gap:2px;width:20px;">
+      <div style="height:2px;background:#e74c3c;border-radius:1px;"></div>
+      <div style="height:2px;background:#f39c12;border-radius:1px;"></div>
+    </div>
+    <span class="layer-label" data-ro="Infrastructură agrement" data-en="Recreation Infrastructure">Infrastructură agrement</span>
+  </div>
+</div>
+
+<!-- Legend -->
+<div id="legend">
+  <div id="legend-header">Legendă</div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#e8734a;"></div>
+    <span class="legend-label" data-ro="Limita parcului" data-en="Park Boundary">Limita parcului</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#9b59b6;"></div>
+    <span class="legend-label" data-ro="Sit Natura 2000" data-en="Natura 2000 Site">Sit Natura 2000 Bucegi</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#ff8686; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Zonă de Protecție Integrală" data-en="Integral Protection Zone">ZPI — Zonă de Protecție Integrală</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#bb0000; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Zonă de Protecție Strictă" data-en="Strict Protection Zone">ZPS — Zonă de Protecție Strictă</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#50ca50; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Zonă de Management Durabil" data-en="Sustainable Management Zone">ZMD — Zonă de Management Durabil</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#ffff5f; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Zonă de Dezvoltare Durabilă" data-en="Sustainable Development Zone">ZDD — Zonă de Dezvoltare Durabilă</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="background:#000000; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Rezervații naturale conform OUG nr. 49 / 2016" data-en="Natural reserves according to OUG no. 49 / 2016">Rezervații naturale conform OUG nr. 49 / 2016</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#0432b1; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Rezervații naturale propuse APN BUCEGI" data-en="Natural reserves proposed by APN BUCEGI">Rezervații naturale propuse APN BUCEGI</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#2d5a3d; height:8px; opacity:0.7;"></div>
+    <span class="legend-label" data-ro="Pădure" data-en="Forest">Pădure</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#e74c3c;"></div>
+    <span class="legend-label" data-ro="Linie Telecabină / Telegondolă" data-en="Cable Car / Gondola line">Linie Telecabină / Telegondolă</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-line" style="background:#f39c12;"></div>
+    <span class="legend-label" data-ro="Linie Teleschi / Telescaun" data-en="Ski Lift / Chairlift line">Linie Teleschi / Telescaun</span>
+  </div>
+</div>
+
+<div id="coords-bar">Plasați cursorul pe hartă</div>
+<div id="error-toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+
+  // ════════════════════════════════════════════════════════════════════════
+  // TRANSLATIONS
+  // ════════════════════════════════════════════════════════════════════════
+  const T = {
+    ro: {
+      loading:     'Se încarcă harta Parcului Natural Bucegi …',
+      headerSub:   'Hartă Interactivă',
+      status:      'Parc Deschis · Date live',
+      header:      'Parcul Natural Bucegi',
+      dbTitle:     'Prezentare Parc',
+      dbSubtitle:  'Condiții actuale',
+      kpiArea:     'Suprafață',
+      kpiForest:   'Suprafață împădurită',
+      kpiSpecies:  'Specii floră',
+      kpiTrails:   'Trasee marcate',
+      kpiPeak:     'altitudine',
+      kpiBears:    'Urși bruni',
+      kpiTrend1: '▲ Zonă protejată',
+      kpiTrend2: '▲ ~30% cu statut de protecție',
+      kpiTrend3: '▲ 100 endemice',
+      kpiTrend4: '● Accesibile',
+      kpiTrend5: 'Populație în creștere',
+      dbInfo:      'Activați straturile pentru a explora traseele, zonarea și infrastructura parcului.',
+      layersTitle: 'Straturi hartă',
+      legendTitle: 'Legendă',
+      grpLimits:   'Limite și zonare',
+      boundary:    'Limita parcului',
+      zoning:      'Zonare parc, H.G. 187/2011',
+      n2site:      'Sit Natura 2000 Bucegi',
+      grpVeg:      'Vegetație',
+      grpTrails:   'Trasee',
+      grpPoi:      'Puncte de interes',
+      grpAgrement: 'Infrastructură agrement',
+      mobInfo:     'Parc',
+      mobLayers:   'Straturi',
+      mobLegend:   'Legendă',
+      coords:      'Plasați cursorul pe hartă',
+      elevation:   'Altitudine maximă',
+      capacity:    'Capacitate',
+      phone:       'Telefon',
+      hours:       'Program',
+      address:     'Adresă',
+      slopes:      'Pârtii',
+      altMin:      'Alt. min',
+      altMax:      'Alt. max',
+      peak:        'Vârf montan',
+      shelter:     'Refugiu montan',
+      cabin:       'Cabană',
+      grpReserves: 'Rezervații naturale',
+      ski:         'Stațiune schi',
+      telegondola:  'Linie telecabină / telegondolă',
+      telescaun:    'Linie teleschi / telescaun',
+      admin:       'Administrație',
+      infocenter:  'Infocentru',
+      zpi: 'ZPI — Zonă de Protecție Integrală',
+      zps: 'ZPS — Zonă de Protecție Strictă',
+      zmd: 'ZMD — Zonă de Management Durabil',
+      zdd: 'ZDD — Zonă de Dezvoltare Durabilă',
+    },
+    en: {
+      loading:     'Loading Bucegi Natural Park map…',
+      headerSub:   'Interactive Explorer',
+      header:      'Bucegi Natural Park',
+      status:      'Park Open · Live data',
+      dbTitle:     'Park Overview',
+      dbSubtitle:  'Live conditions',
+      kpiArea:     'Total Area',
+      kpiForest:   'Forest Cover',
+      kpiSpecies:  'Flora Species',
+      kpiTrails:   'Marked Trails',
+      kpiPeak:     'Highest Peak',
+      kpiBears:    'Brown Bears',
+      kpiTrend1: '▲ Protected Area',
+      kpiTrend2: '▲ ~30% with protection status',
+      kpiTrend3: '▲ 100 endemic',
+      kpiTrend4: '● Accessible',
+      kpiTrend5: 'Growing Population',
+      dbInfo:      'Toggle layers to explore trails, zoning and park infrastructure.',
+      layersTitle: 'Map Layers',
+      legendTitle: 'Legend',
+      grpLimits:   'Limits & Zoning',
+      boundary:    'Park Boundary',
+      zoning:      'Park Zoning, H.G. 187/2011',
+      n2site:      'Natura 2000 Site',
+      grpVeg:      'Vegetation',
+      grpTrails:   'Trails',
+      grpPoi:      'Points of Interest',
+      grpAgrement: 'Recreation Infrastructure',
+      mobInfo:     'Park',
+      mobLayers:   'Layers',
+      mobLegend:   'Legend',
+      coords:      'Hover map to show coordinates',
+      elevation:   'Elevation',
+      capacity:    'Capacity',
+      phone:       'Phone',
+      hours:       'Hours',
+      telegondola: 'Cable Car / Gondola line',
+      telescaun:   'Ski Lift / Chairlift line',
+      address:     'Address',
+      slopes:      'Slopes',
+      altMin:      'Min alt',
+      altMax:      'Max alt',
+      peak:        'Mountain Peak',
+      shelter:     'Mountain Shelter',
+      cabin:       'Cabin',
+      ski:         'Ski Resort',
+      admin:       'Administration',
+      grpReserves: 'Nature Reserves',
+      infocenter:  'Info Center',
+      zpi: 'ZPI — Integral Protection Zone',
+      zps: 'ZPS — Strict Protection Zone',
+      zmd: 'ZMD — Sustainable Management Zone',
+      zdd: 'ZDD — Sustainable Development Zone',
+    }
+  };
+
+  let currentLang = 'ro';
+
+  function setLang(lang) {
+    currentLang = lang;
+    const t = T[lang];
+    document.documentElement.lang = lang;
+
+    const setText = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+
+    setText('header-sub',    t.headerSub);
+    setText('header-h1',     t.header);
+    setText('status-text',   t.status);
+    setText('db-title',      t.dbTitle);
+    setText('db-subtitle',   t.dbSubtitle);
+    setText('kpi-area',      t.kpiArea);
+    setText('kpi-forest',    t.kpiForest);
+    setText('kpi-species',   t.kpiSpecies);
+    setText('kpi-trails',    t.kpiTrails);
+    setText('kpi-peak',      t.kpiPeak);
+    setText('kpi-bears',     t.kpiBears);
+    setText('kpi-trend-1',   t.kpiTrend1);
+    setText('kpi-trend-2',   t.kpiTrend2);
+    setText('kpi-trend-3',   t.kpiTrend3);
+    setText('kpi-trend-4',   t.kpiTrend4);
+    setText('kpi-trend-5',   t.kpiTrend5);
+    setText('db-info',       t.dbInfo);
+    setText('layers-title',  t.layersTitle);
+    setText('legend-header', t.legendTitle);
+    setText('grp-limits',    t.grpLimits);
+    setText('grp-reserves',  t.grpReserves);
+    setText('grp-veg',       t.grpVeg);
+    setText('grp-trails',    t.grpTrails);
+    setText('grp-poi',       t.grpPoi);
+    setText('grp-agrement',  t.grpAgrement);
+    setText('coords-bar',    t.coords);
+
+    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+      el.textContent = el.getAttribute(`data-${lang}`);
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+    });
+
+    const mobInfo = document.getElementById('mob-btn-info');
+    const mobLayers = document.getElementById('mob-btn-layers');
+    const mobLegend = document.getElementById('mob-btn-legend');
+    if (mobInfo) mobInfo.textContent = t.mobInfo;
+    if (mobLayers) mobLayers.textContent = t.mobLayers;
+    if (mobLegend) mobLegend.textContent = t.mobLegend;
+
+    const mob = document.getElementById('mob-lang-label');
+    if (mob) mob.textContent = lang === 'ro' ? 'EN' : 'RO';
+    if (typeof currentDrawer !== 'undefined' && currentDrawer) openDrawer(currentDrawer);
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // CONFIG - Django REST API endpoints
+  // ════════════════════════════════════════════════════════════════════════
+
+  const API_BASE_URL = '';
+  const MAP_CENTER = [45.40, 25.45];
+  const MAP_ZOOM = 11;
+
+  // Layer storage
+  const activeLayers = {};
+
+  // Color mapping for zoning types
+  const ZONE_COLORS = {
+    'ZPI': '#ff8686',
+    'ZPS': '#cc0000',
+    'ZMD': '#50ca50',
+    'ZDD': '#ffff00'
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // LAYER CONFIGURATION - All layers as GeoJSON from Django API
+  // ════════════════════════════════════════════════════════════════════════
+
+  const LAYER_CONFIG = {
+    park_boundary: {
+      url: '/api/limita-ronpa006/?format=geojson',
+      style: { color: '#e8734a', weight: 3, fillOpacity: 0.1 },
+      popup: (props) => `<div class="popup-title">Limita Parcului Natural Bucegi</div>`
+    },
+    ROSCI0013: {
+      url: '/api/rosci.geojson',
+      style: { color: '#9b59b6', weight: 2, fillOpacity: 0.15 },
+      popup: (props) => `<div class="popup-title">Sit Natura 2000 ROSCI0013</div>`
+    },
+    zoning: {
+      url: '/api/zoning.geojson',
+      style: (feature) => ({
+        fillColor: ZONE_COLORS[feature.properties.zone_type] || '#6b9e78',
+        weight: 1,
+        color: '#ffffff',
+        fillOpacity: 0.65
+      }),
+      popup: (props) => {
+        const t = T[currentLang];
+        const zoneNames = {
+          'ZPI': t.zpi,
+          'ZPS': t.zps,
+          'ZMD': t.zmd,
+          'ZDD': t.zdd
+        };
+        return `
+          <div class="popup-title">${props.name_ro || 'Zonă protejată'}</div>
+          <div class="popup-tag">${zoneNames[props.zone_type] || props.zone_type}</div>
+          ${props.area_ha ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.area_ha)} ha</strong></div>` : ''}
+        `;
+      }
+    },
+    forest: {
+      url: '/api/forest.geojson',
+      style: { fillColor: '#093117', weight: 0.5, color: '#0a3a1a', fillOpacity: 0.8 }
+    },
+    admin: {
+      url: '/api/admin.geojson',
+      pointToLayer: (feature, latlng) => L.marker(latlng, {
+        icon: L.divIcon({
+          html: `<div style="width:32px;height:32px;border-radius:6px;background:rgba(20,35,25,0.85);border:1.5px solid #a8c5a0;display:flex;align-items:center;justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a8c5a0" stroke-width="1.8">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+              <line x1="12" y1="11" x2="12" y2="11.5" stroke-width="2.5"/>
+              <line x1="12" y1="13.5" x2="12" y2="17" stroke-width="2"/>
+            </svg>
+          </div>`,
+          iconSize: [32, 32],
+          className: ''
+        })
+      }),
+      popup: (props) => {
+        const t = T[currentLang];
+        const name = currentLang === 'ro' ? (props.Nume || props.name) : (props.Name || props.name);
+        return `<div class="popup-title">${name || 'Administrație'}</div>
+          ${props.address || props.adresa ? `<div class="popup-row"><span>${t.address}</span><strong>${props.address || props.adresa}</strong></div>` : ''}
+          ${props.phone || props.telefon ? `<div class="popup-row"><span>${t.phone}</span><strong>${props.phone || props.telefon}</strong></div>` : ''}`
+      }
+    },
+    infrastructura_agrement: {
+      url: '/api/infrastructure.geojson',
+      style: (feature) => {
+        const categ = feature.properties.categ || '';
+        if (categ === 'telecabina/telegondola') return { color: '#e74c3c', weight: 3 };
+        if (categ === 'telescaun/teleschi') return { color: '#f39c12', weight: 2 };
+        return { color: '#ffffff', weight: 1 };
+      },
+      popup: (props) => {
+        const name = props.Name || props.name || '';
+        const categ = props.categ || '';
+        const label = categ === 'telecabina/telegondola'
+          ? (currentLang === 'ro' ? 'Telecabină / Telegondolă' : 'Cable Car / Gondola')
+          : categ === 'telescaun/teleschi'
+          ? (currentLang === 'ro' ? 'Teleschi / Telescaun' : 'Ski Lift / Chairlift')
+          : '';
+        return `<div class="popup-title">${name}</div><div class="popup-tag">${label}</div>`;
+      }
+    },
+    reservesoug49: {
+      url: '/api/reserves_oug49.geojson',
+      style: { color: '#000000', weight: 2, fillOpacity: 0.3, dashArray: '5,5' }
+    },
+    reservesapnbproposal: {
+      url: '/api/reserves_proposed.geojson',
+      style: { color: '#0432b1', weight: 2, fillOpacity: 0.3 }
+    }
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // MAP INIT
+  // ════════════════════════════════════════════════════════════════════════
+
+  const map = L.map('map', { center: MAP_CENTER, zoom: MAP_ZOOM, zoomControl: false });
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  map.on('mousemove', e => {
+    document.getElementById('coords-bar').textContent = `${e.latlng.lat.toFixed(5)}°N  ${e.latlng.lng.toFixed(5)}°E`;
+  });
+
+  // ════════════════════════════════════════════════════════════════════════
+  // LAYER LOADER
+  // ════════════════════════════════════════════════════════════════════════
+
+  function showError(msg) {
+    const toast = document.getElementById('error-toast');
+    toast.textContent = '⚠ ' + msg;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 5000);
+  }
+
+  function setLayerLoading(key, loading) {
+    const item = document.querySelector(`[data-layer="${key}"]`);
+    if (!item) return;
+    let indicator = item.querySelector('.layer-loading');
+    if (loading) {
+      if (!indicator) {
+        indicator = document.createElement('span');
+        indicator.className = 'layer-loading';
+        indicator.textContent = '●';
+        item.appendChild(indicator);
+      }
+    } else {
+      if (indicator) indicator.remove();
+    }
+  }
+
+  async function addLayer(key) {
+    const config = LAYER_CONFIG[key];
+    if (!config) return;
+
+    setLayerLoading(key, true);
+
+    try {
+      const response = await fetch(config.url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+
+      const layerOptions = {
+        style: config.style,
+        onEachFeature: (feature, layer) => {
+          if (config.popup) layer.bindPopup(config.popup(feature.properties));
+        }
+      };
+
+      if (config.pointToLayer) {
+        layerOptions.pointToLayer = config.pointToLayer;
+      }
+
+      const geoJsonLayer = L.geoJSON(data, layerOptions);
+      geoJsonLayer.addTo(map);
+      activeLayers[key] = geoJsonLayer;
+    } catch (err) {
+      showError(`Layer "${key}": ${err.message}`);
+    } finally {
+      setLayerLoading(key, false);
+    }
+  }
+
+  function removeLayer(key) {
+    if (activeLayers[key]) {
+      map.removeLayer(activeLayers[key]);
+      delete activeLayers[key];
+    }
+  }
+
+  function toggleLayer(el) {
+    el.classList.toggle('active');
+    const key = el.dataset.layer;
+    if (el.classList.contains('active')) {
+      addLayer(key);
+    } else {
+      removeLayer(key);
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // BOOT - Load default layers
+  // ════════════════════════════════════════════════════════════════════════
+
+  async function init() {
+    const defaultOn = ['park_boundary', 'ROSCI0013', 'admin'];
+    for (const key of defaultOn) {
+      await addLayer(key);
+    }
+    setTimeout(() => {
+      document.getElementById('loading').classList.add('hidden');
+      setTimeout(() => document.getElementById('loading').remove(), 800);
+    }, 800);
+  }
+
+  init();
+
+</script>
+
+<!-- Mobile bottom nav -->
+<div id="mobile-nav">
+  <button class="mob-btn" onclick="openDrawer('info')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span id="mob-btn-info">Parc</span>
+  </button>
+  <button class="mob-btn" onclick="openDrawer('layers')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+      <polyline points="2 17 12 22 22 17"/>
+      <polyline points="2 12 12 17 22 12"/>
+    </svg>
+    <span id="mob-btn-layers">Straturi</span>
+  </button>
+  <button class="mob-btn" onclick="openDrawer('legend')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/>
+      <line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/>
+    </svg>
+    <span id="mob-btn-legend">Legendă</span>
+  </button>
+  <button class="mob-btn" onclick="setLang(currentLang==='ro'?'en':'ro')" id="mob-lang-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span id="mob-lang-label">EN</span>
+  </button>
+</div>
+
+<!-- Drawer overlay -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- Mobile drawer -->
+<div id="mobile-drawer">
+  <div id="drawer-handle"></div>
+  <button id="drawer-close" onclick="closeDrawer()">✕</button>
+  <div id="drawer-content"></div>
+</div>
+
+<script>
+  // Drawer functions
+  function drawerInfoHTML() {
+    const t = T[currentLang];
+    return `
+      <div class="mob-section-title">${t.dbTitle}</div>
+      <div class="mob-kpi-grid">
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">32,520<span> ha</span></div><div class="mob-kpi-label">${t.kpiArea}</div></div>
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">21,369<span> ha</span></div><div class="mob-kpi-label">${t.kpiForest}</div></div>
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">1,200+</div><div class="mob-kpi-label">${t.kpiSpecies}</div></div>
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">316<span> km</span></div><div class="mob-kpi-label">${t.kpiTrails}</div></div>
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">~100</div><div class="mob-kpi-label">${t.kpiBears}</div></div>
+        <div class="mob-kpi-cell"><div class="mob-kpi-value">2,505<span> m</span></div><div class="mob-kpi-label">${t.kpiPeak}</div></div>
+      </div>
+      <p class="mob-info">${t.dbInfo}</p>
+    `;
+  }
+
+  function drawerLayersHTML() {
+    const panel = document.getElementById('layer-panel').cloneNode(true);
+    panel.removeAttribute('id');
+    panel.style.cssText = 'width:100%;border:none;border-radius:0;background:none;backdrop-filter:none;animation:none;';
+    const hdr = panel.querySelector('#layer-panel-header');
+    if (hdr) hdr.remove();
+    panel.querySelectorAll('.layer-item').forEach(item => {
+      item.onclick = function() {
+        const key = this.dataset.layer;
+        const allItems = document.querySelectorAll(`[data-layer="${key}"]`);
+        const willBeActive = !this.classList.contains('active');
+        allItems.forEach(el => el.classList.toggle('active', willBeActive));
+        willBeActive ? addLayer(key) : removeLayer(key);
+      };
+      const desktopItem = document.querySelector(`#layer-panel [data-layer="${item.dataset.layer}"]`);
+      if (desktopItem) item.classList.toggle('active', desktopItem.classList.contains('active'));
+    });
+    return panel.outerHTML;
+  }
+
+  function drawerLegendHTML() {
+    const legend = document.getElementById('legend').cloneNode(true);
+    legend.removeAttribute('id');
+    legend.style.cssText = 'width:100%;border:none;border-radius:0;background:none;backdrop-filter:none;animation:none;max-height:none;overflow:visible;';
+    const hdr = legend.querySelector('#legend-header');
+    if (hdr) hdr.remove();
+    return legend.outerHTML;
+  }
+
+  let currentDrawer = null;
+
+  function openDrawer(type) {
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    const content = document.getElementById('drawer-content');
+    const t = T[currentLang];
+
+    document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+
+    let html = '';
+    let title = '';
+
+    if (type === 'info') {
+      html = drawerInfoHTML();
+      title = t.dbTitle;
+      document.querySelector('[onclick="openDrawer(\'info\')"]').classList.add('active');
+    } else if (type === 'layers') {
+      html = drawerLayersHTML();
+      title = t.layersTitle;
+      document.querySelector('[onclick="openDrawer(\'layers\')"]').classList.add('active');
+    } else if (type === 'legend') {
+      html = drawerLegendHTML();
+      title = t.legendTitle;
+      document.querySelector('[onclick="openDrawer(\'legend\')"]').classList.add('active');
+    }
+
+    if (currentDrawer === type && drawer.classList.contains('open')) {
+      closeDrawer();
+      return;
+    }
+
+    content.innerHTML = `<div class="mob-section-title" style="margin-top:4px;">${title}</div>${html}`;
+    drawer.classList.add('open');
+    overlay.style.display = 'block';
+    currentDrawer = type;
+  }
+
+  function closeDrawer() {
+    document.getElementById('mobile-drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').style.display = 'none';
+    document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+    currentDrawer = null;
+  }
+</script>
+</body>
+</html>
