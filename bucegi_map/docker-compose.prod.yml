@@ -1,21 +1,42 @@
 services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: bucegi_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   web:
     build: .
     container_name: bucegi_geodjango
     restart: unless-stopped
-    command: gunicorn bucegi_map.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn bucegi_map.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
-      - static_volume:/static
+      - static_volume:/app/staticfiles
     ports:
-      - "8095:8080"
+      - "8095:8000"
     environment:
-      - DB_NAME=bucegi_gis_db
+      - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=198.168.0.98
-      - DB_PORT=5432
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DJANGO_ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    depends_on:
+      db:
+        condition: service_healthy
 
   nginx:
     image: nginx:alpine
@@ -23,7 +44,6 @@ services:
     restart: unless-stopped
     ports:
       - "8097:80"
-      # - "443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl/map.bucegipark.ro.crt:/etc/nginx/ssl/map.bucegipark.ro.crt:ro
@@ -34,3 +54,4 @@ services:
 
 volumes:
   static_volume:
+  pgdata:

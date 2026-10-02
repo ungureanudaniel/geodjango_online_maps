@@ -32,4 +32,5 @@ router.register(r'limita-administrativa-ro',views.LimitaAdministrativaRomaniaVie
 
 urlpatterns = [
     path('api/', include(router.urls)),
+
 ]
