@@ -43,7 +43,7 @@ services:
     container_name: bucegi_nginx
     restart: unless-stopped
     ports:
-      - "8097:80"
+      - "80:80"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl/map.bucegipark.ro.crt:/etc/nginx/ssl/map.bucegipark.ro.crt:ro
