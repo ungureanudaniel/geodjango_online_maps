@@ -828,12 +828,12 @@
       popup: (props) => `<div class="popup-title">Limita Parcului Natural Bucegi</div>`
     },
     ROSCI0013: {
-      url: '/api/rosci.geojson',
+      url: '/api/limita-rosci0013-oug/?format=geojson',
       style: { color: '#9b59b6', weight: 2, fillOpacity: 0.15 },
       popup: (props) => `<div class="popup-title">Sit Natura 2000 ROSCI0013</div>`
     },
     zoning: {
-      url: '/api/zoning.geojson',
+      url: '/api/zonare-hg2011/?format=geojson',
       style: (feature) => ({
         fillColor: ZONE_COLORS[feature.properties.zone_type] || '#6b9e78',
         weight: 1,
@@ -855,12 +855,12 @@
         `;
       }
     },
-    forest: {
+    {% comment %} forest: {
       url: '/api/forest.geojson',
       style: { fillColor: '#093117', weight: 0.5, color: '#0a3a1a', fillOpacity: 0.8 }
-    },
+    }, {% endcomment %}
     admin: {
-      url: '/api/admin.geojson',
+      url: '/api/cladiri-administrative/?format=geojson',
       pointToLayer: (feature, latlng) => L.marker(latlng, {
         icon: L.divIcon({
           html: `<div style="width:32px;height:32px;border-radius:6px;background:rgba(20,35,25,0.85);border:1.5px solid #a8c5a0;display:flex;align-items:center;justify-content:center;">
@@ -883,7 +883,7 @@
       }
     },
     infrastructura_agrement: {
-      url: '/api/infrastructure.geojson',
+      url: '/api/infrastructura-agrement/?format=geojson',
       style: (feature) => {
         const categ = feature.properties.categ || '';
         if (categ === 'telecabina/telegondola') return { color: '#e74c3c', weight: 3 };
@@ -902,11 +902,11 @@
       }
     },
     reservesoug49: {
-      url: '/api/reserves_oug49.geojson',
+      url: '/api/arii-naturale-oug2016/?format=geojson',
       style: { color: '#000000', weight: 2, fillOpacity: 0.3, dashArray: '5,5' }
     },
     reservesapnbproposal: {
-      url: '/api/reserves_proposed.geojson',
+      url: '/api/arii-naturale-apnb/?format=geojson',
       style: { color: '#0432b1', weight: 2, fillOpacity: 0.3 }
     }
   };
