@@ -560,15 +560,6 @@
     <div class="layer-dot" style="background:#a8c5a0;"></div>
     <span class="layer-label" data-ro="Administrație / Centre de informare" data-en="Admin / Info Centers">Administrație / Centre de informare</span>
   </div>
-
-  <div class="layer-item" data-layer="infrastructura_agrement" onclick="toggleLayer(this)">
-    <div class="layer-toggle"></div>
-    <div style="display:flex;flex-direction:column;gap:2px;width:20px;">
-      <div style="height:2px;background:#e74c3c;border-radius:1px;"></div>
-      <div style="height:2px;background:#f39c12;border-radius:1px;"></div>
-    </div>
-    <span class="layer-label" data-ro="Infrastructură agrement" data-en="Recreation Infrastructure">Infrastructură agrement</span>
-  </div>
 </div>
 
 <!-- Legend -->
@@ -880,25 +871,6 @@
         return `<div class="popup-title">${name || 'Administrație'}</div>
           ${props.address || props.adresa ? `<div class="popup-row"><span>${t.address}</span><strong>${props.address || props.adresa}</strong></div>` : ''}
           ${props.phone || props.telefon ? `<div class="popup-row"><span>${t.phone}</span><strong>${props.phone || props.telefon}</strong></div>` : ''}`
-      }
-    },
-    infrastructura_agrement: {
-      url: '/api/infrastructura-agrement/?format=geojson',
-      style: (feature) => {
-        const categ = feature.properties.categ || '';
-        if (categ === 'telecabina/telegondola') return { color: '#e74c3c', weight: 3 };
-        if (categ === 'telescaun/teleschi') return { color: '#f39c12', weight: 2 };
-        return { color: '#ffffff', weight: 1 };
-      },
-      popup: (props) => {
-        const name = props.Name || props.name || '';
-        const categ = props.categ || '';
-        const label = categ === 'telecabina/telegondola'
-          ? (currentLang === 'ro' ? 'Telecabină / Telegondolă' : 'Cable Car / Gondola')
-          : categ === 'telescaun/teleschi'
-          ? (currentLang === 'ro' ? 'Teleschi / Telescaun' : 'Ski Lift / Chairlift')
-          : '';
-        return `<div class="popup-title">${name}</div><div class="popup-tag">${label}</div>`;
       }
     },
     reservesoug49: {

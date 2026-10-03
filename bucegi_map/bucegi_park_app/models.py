@@ -146,7 +146,7 @@ class AriiNaturalePropunereAPNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Arii naturale protejate, conform propunere APNB'
+        db_table = 'limite\".\"Rezervatii propuse Bucegi v2'
         verbose_name = "Arii naturale protejate propunere APNB"
 
 
