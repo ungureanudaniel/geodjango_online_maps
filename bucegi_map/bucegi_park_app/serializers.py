@@ -110,13 +110,13 @@ class AriiNaturaleOUG2016Serializer(WGS84GeoFeatureSerializer):
     class Meta():
         model = AriiNaturaleOUG2016
         geo_field = 'geom'
-        fields = ['id', 'localid', 'characters', 'text', 'arie', 'tip_anp']
+        fields = ['id', 'localId', 'text', 'Arie', 'Tip_anp', 'cod_RO']
 
 class AriiNaturalePropunereAPNBSerializer(WGS84GeoFeatureSerializer):
     class Meta():
         model = AriiNaturalePropunereAPNB
         geo_field = 'geom'
-        fields = ['id', 'localid', 'characters', 'text', 'arie', 'tip_anp']
+        fields = ['id', 'localId', 'text', 'Arie', 'Tip_anp', 'cod_RO']
 
 class LimitaAdministrativaJudetSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
