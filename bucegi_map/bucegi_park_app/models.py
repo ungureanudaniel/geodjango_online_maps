@@ -143,7 +143,7 @@ class AriiNaturaleOUG2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite."Arii naturale protejate, conform OUG 49/2016"'
+        db_table = '"limite"."Arii naturale protejate, conform OUG 49/2016"'
         verbose_name = "Arii naturale protejate OUG 49/2016"
 
 
@@ -160,7 +160,7 @@ class AriiNaturalePropunereAPNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite."Rezervatii propuse Bucegi v2"'
+        db_table = '"limite"."Rezervatii propuse Bucegi v2"'
         verbose_name = "Arii naturale protejate propunere APNB"
 
 
