@@ -137,7 +137,6 @@ class AriiNaturaleOUG2016(models.Model):
     text = models.CharField(max_length=254, blank=True, null=True)
     arie = models.FloatField(db_column='Arie', blank=True, null=True)
     tip_anp = models.CharField(max_length=100, db_column='Tip_anp', blank=True, null=True)
-    nr_ord = models.CharField(max_length=5, db_column='NR_ORD', blank=True, null=True)
     characters = models.CharField(max_length=95, db_column='CharacterS', blank=True, null=True)
     geom = models.MultiPolygonField(srid=3844)
 
