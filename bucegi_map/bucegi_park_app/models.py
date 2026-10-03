@@ -132,21 +132,35 @@ class LimitaROSCI0013OUG2025(models.Model):
 
 class AriiNaturaleOUG2016(models.Model):
     """Protected areas per OUG 49/2016 — MultiPolygon, EPSG:3844."""
+    localid = models.CharField(max_length=9, db_column='localId', blank=True, null=True)
+    cod_ro = models.CharField(max_length=15, db_column='cod_RO', blank=True, null=True)
+    text = models.CharField(max_length=254, blank=True, null=True)
+    arie = models.FloatField(db_column='Arie', blank=True, null=True)
+    tip_anp = models.CharField(max_length=100, db_column='Tip_anp', blank=True, null=True)
+    nr_ord = models.CharField(max_length=5, db_column='NR_ORD', blank=True, null=True)
+    characters = models.CharField(max_length=95, db_column='CharacterS', blank=True, null=True)
     geom = models.MultiPolygonField(srid=3844)
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Arii naturale protejate, conform OUG 49/2016'
+        db_table = 'limite."Arii naturale protejate, conform OUG 49/2016"'
         verbose_name = "Arii naturale protejate OUG 49/2016"
 
 
 class AriiNaturalePropunereAPNB(models.Model):
-    """Protected areas per APNB proposal — MultiPolygon, EPSG:3844 (SRID=0 in DB)."""
-    geom = models.MultiPolygonField(srid=0)
+    """Protected areas per APNB proposal — MultiPolygon, EPSG:3844."""
+    localid = models.CharField(max_length=9, db_column='localId', blank=True, null=True)
+    cod_ro = models.CharField(max_length=15, db_column='cod_RO', blank=True, null=True)
+    text = models.CharField(max_length=254, blank=True, null=True)
+    arie = models.FloatField(db_column='Arie', blank=True, null=True)
+    tip_anp = models.CharField(max_length=100, db_column='Tip_anp', blank=True, null=True)
+    nr_ord = models.CharField(max_length=5, db_column='NR_ORD', blank=True, null=True)
+    characters = models.CharField(max_length=95, db_column='CharacterS', blank=True, null=True)
+    geom = models.MultiPolygonField(srid=3844)
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Rezervatii propuse Bucegi v2'
+        db_table = 'limite."Rezervatii propuse Bucegi v2"'
         verbose_name = "Arii naturale protejate propunere APNB"
 
 

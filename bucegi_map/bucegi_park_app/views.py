@@ -101,7 +101,7 @@ class AriiNaturaleOUG2016ViewSet(GeoReadOnlyViewSet):
 class AriiNaturalePropunereAPNBViewSet(GeoReadOnlyViewSet):
     model = AriiNaturalePropunereAPNB
     serializer_class = AriiNaturalePropunereAPNBSerializer
-    srid = 0
+    # srid = 0
 
 
 class LimitaAdministrativaJudetViewSet(GeoReadOnlyViewSet):
