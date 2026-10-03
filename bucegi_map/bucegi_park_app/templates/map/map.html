@@ -914,7 +914,7 @@
   // ════════════════════════════════════════════════════════════════════════
   // MAP INIT
   // ════════════════════════════════════════════════════════════════════════
-
+  L.TileLayer.prototype.options.referrerPolicy = 'strict-origin-when-cross-origin';
   const map = L.map('map', { center: MAP_CENTER, zoom: MAP_ZOOM, zoomControl: false });
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
