@@ -859,8 +859,8 @@
       style: { color: '#000000', weight: 2, fillOpacity: 0.3, dashArray: '5,5' },
       popup: (props) => `
         <div class="popup-title">${props.text || 'Rezervație naturală'}</div>
-        <div class="popup-tag">${props.cod_RO || ''}</div>
-        ${props.Arie ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.Arie)} ha</strong></div>` : ''}
+        <div class="popup-tag">${props.cod_ro || ''}</div>
+        ${props.arie ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.arie)} ha</strong></div>` : ''}
       `
     },
     reservesapnbproposal: {
@@ -868,8 +868,8 @@
       style: { color: '#0432b1', weight: 2, fillOpacity: 0.3 },
       popup: (props) => `
         <div class="popup-title">${props.text || 'Rezervație naturală'}</div>
-        <div class="popup-tag">${props.cod_RO || ''}</div>
-        ${props.Arie ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.Arie)} ha</strong></div>` : ''}
+        <div class="popup-tag">${props.cod_ro || ''}</div>
+        ${props.arie ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.arie)} ha</strong></div>` : ''}
       `
     }
   };
