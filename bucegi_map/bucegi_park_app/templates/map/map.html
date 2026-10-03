@@ -971,6 +971,7 @@
   // ════════════════════════════════════════════════════════════════════════
 
   async function init() {
+    setLang(currentLang);   
     const defaultOn = ['park_boundary', 'ROSCI0013', 'admin'];
     for (const key of defaultOn) {
       await addLayer(key);
