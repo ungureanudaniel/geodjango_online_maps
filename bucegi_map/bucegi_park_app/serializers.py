@@ -106,15 +106,15 @@ class LimitaROSCI0013OUG2025Serializer(SimpleGeomSerializer):
         model = LimitaROSCI0013OUG2025
 
 
-class AriiNaturaleOUG2016Serializer(SimpleGeomSerializer):
-    class Meta(SimpleGeomSerializer.Meta):
-        model = AriiNaturaleOUG2016
+class AriiNaturaleOUG2016Serializer(WGS84GeoFeatureSerializer):
+    class Meta():
+        geo_field = 'geom'
+        fields = ['id', 'localid', 'characters', 'text', 'arie', 'tip_anp']
 
-
-class AriiNaturalePropunereAPNBSerializer(SimpleGeomSerializer):
-    class Meta(SimpleGeomSerializer.Meta):
-        model = AriiNaturalePropunereAPNB
-
+class AriiNaturalePropunereAPNBSerializer(WGS84GeoFeatureSerializer):
+    class Meta():
+        geo_field = 'geom'
+        fields = ['id', 'localid', 'characters', 'text', 'arie', 'tip_anp']
 
 class LimitaAdministrativaJudetSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
