@@ -537,7 +537,7 @@
     <div class="layer-dash" style="border-color:#9b59b6;"></div>
     <span class="layer-label" data-ro="Sit Natura 2000" data-en="Natura 2000 Site">Sit Natura 2000</span>
   </div>
-  <div class="layer-group" id="grp-reserves">Rezervații naturale</div>
+  {% comment %} <div class="layer-group" id="grp-reserves">Rezervații naturale</div>
   <div class="layer-item" data-layer="reservesoug49" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
     <div class="layer-dash" style="background:#000000; opacity:0.8;"></div>
@@ -547,7 +547,7 @@
     <div class="layer-toggle"></div>
     <div class="layer-swatch" style="background:#0432b1; opacity:0.8;"></div>
     <span class="layer-label" data-ro="Rezervații naturale propuse APN BUCEGI" data-en="Natural reserves proposed by APN BUCEGI">Rezervații naturale propuse APN BUCEGI</span>
-  </div>
+  </div> {% endcomment %}
   <div class="layer-group" id="grp-veg">Administrative</div>
   <div class="layer-item active" data-layer="admin" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
@@ -583,14 +583,14 @@
     <div class="legend-box" style="background:#ffff5f; opacity:0.7;"></div>
     <span class="legend-label" data-ro="Zonă de Dezvoltare Durabilă" data-en="Sustainable Development Zone">ZDD — Zonă de Dezvoltare Durabilă</span>
   </div>
-  <div class="legend-item">
+  {% comment %} <div class="legend-item">
     <div class="legend-dash" style="background:#000000; opacity:0.7;"></div>
     <span class="legend-label" data-ro="Rezervații naturale conform OUG nr. 49 / 2016" data-en="Natural reserves according to OUG no. 49 / 2016">Rezervații naturale conform OUG nr. 49 / 2016</span>
-  </div>
-  <div class="legend-item">
+  </div> {% endcomment %}
+  {% comment %} <div class="legend-item">
     <div class="legend-line" style="background:#0432b1; opacity:0.7;"></div>
     <span class="legend-label" data-ro="Rezervații naturale propuse APN BUCEGI" data-en="Natural reserves proposed by APN BUCEGI">Rezervații naturale propuse APN BUCEGI</span>
-  </div>
+  </div> {% endcomment %}
 </div>
 
 <div id="coords-bar">Plasați cursorul pe hartă</div>
