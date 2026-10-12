@@ -53,7 +53,7 @@ class GeoReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 class TraseeTuristiceViewSet(GeoReadOnlyViewSet):
     model = TraseeTuristice
     serializer_class = TraseeTuristiceSerializer
-    srid = 0  # undefined in DB — serve as-is (likely already ~WGS84)
+    srid = 0 
 
 
 class TraseeTematiceViewSet(GeoReadOnlyViewSet):

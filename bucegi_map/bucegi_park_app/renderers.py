@@ -1,4 +1,3 @@
-# bucegi_park_app/renderers.py
 from rest_framework.renderers import JSONRenderer
 
 

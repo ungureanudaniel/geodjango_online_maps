@@ -35,11 +35,8 @@ class WGS84GeoFeatureSerializer(GeoFeatureModelSerializer):
                     g.transform(4326) # Transform to WGS84
                 data['geometry'] = json.loads(g.geojson)
             except Exception:
-                # Leave as-is if conversion fails; better than crashing the endpoint
                 pass
         elif isinstance(geom, dict):
-            # Already proper GeoJSON. If it declares a non-4326 CRS, we trust it
-            # (drf-gis sometimes includes a "crs" key).
             pass
 
         return data
