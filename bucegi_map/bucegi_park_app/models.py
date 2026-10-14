@@ -2,7 +2,7 @@ from django.contrib.gis.db import models
 
 
 # ─────────────────────────────────────────────
-# used schema is 'webmaps'
+# used schema is 'webmap'
 # ─────────────────────────────────────────────
 
 class TraseeTuristice(models.Model):
@@ -16,7 +16,7 @@ class TraseeTuristice(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"trasee_turistice_pnb'
+        db_table = 'webmap\".\"trasee_turistice_pnb'
         verbose_name = "Traseu turistic"
         verbose_name_plural = "Trasee turistice PNB"
 
@@ -34,7 +34,7 @@ class TraseeTematice(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"trasee_tematice_pnb'
+        db_table = 'webmap\".\"trasee_tematice_pnb'
         verbose_name = "Traseu tematic"
         verbose_name_plural = "Trasee tematice PNB"
 
@@ -54,7 +54,7 @@ class CladiriAdministrative(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"cladiri_administrative'
+        db_table = 'webmap\".\"cladiri_administrative'
         verbose_name = "Clădire administrativă"
         verbose_name_plural = "Clădiri administrative APNB"
 
@@ -65,7 +65,7 @@ class InfrastructuraAgrement(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"infrastructura_agrement'
+        db_table = 'webmap\".\"infrastructura_agrement'
         verbose_name = "Infrastructură agrement"
         verbose_name_plural = "Infrastructură agrement"
 
@@ -85,7 +85,7 @@ class ZonarePNBHG2011(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"ZONARE_PNB_HG187_2011'
+        db_table = 'webmap\".\"ZONARE_PNB_HG187_2011'
         verbose_name = "Zonare PNB HG 187/2011"
         verbose_name_plural = "Zonare PNB HG 187/2011"
 
@@ -99,7 +99,7 @@ class ZonarePNBv2025(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"zonare_pnb_v2025'
+        db_table = 'webmap\".\"zonare_pnb_v2025'
         verbose_name = "Zonare PNB v2025"
         verbose_name_plural = "Zonare PNB v2025"
 
@@ -116,7 +116,7 @@ class AriiNaturaleOUG2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"arii_naturale_protejate_oug49_2016'
+        db_table = 'webmap\".\"arii_naturale_protejate_oug49_2016'
         verbose_name = "Arii naturale protejate OUG 49/2016"
 
 
@@ -133,7 +133,7 @@ class AriiNaturalePropunereAPNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"rezervatii_propuse_pnb_v2'
+        db_table = 'webmap\".\"rezervatii_propuse_pnb_v2'
         verbose_name = "Arii naturale protejate, conf. propunere APNB"
 
 
@@ -143,7 +143,7 @@ class LimitaAdministrativaJudet(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limita_administrativa_judet'
+        db_table = 'webmap\".\"limita_administrativa_judet'
         verbose_name = "Limita administrativă Județ PN Bucegi"
 
 
@@ -153,7 +153,7 @@ class LimitaAdministrativaUAT(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limita_administrativa_uat'
+        db_table = 'webmap\".\"limita_administrativa_uat'
         verbose_name = "Limita administrativă UAT PN Bucegi"
 
 
@@ -163,7 +163,7 @@ class LimitaPNBv2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limita_parc_oug_49_2016'
+        db_table = 'webmap\".\"limita_parc_oug_49_2016'
         verbose_name = "Limita PN BUCEGI OUG 49/2016"
 
 
@@ -173,7 +173,7 @@ class LimitaSitN2K2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limita_sit_n2k_rosci0013'
+        db_table = 'webmap\".\"limita_sit_n2k_rosci0013'
         verbose_name = "Limita Sit N2K ROSCI0013 v2016"
 
 
@@ -183,7 +183,7 @@ class LimitaSectoarePNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limite_sectoare_pnb_v2021'
+        db_table = 'webmap\".\"limite_sectoare_pnb_v2021'
         verbose_name = "Limita sectoare PNB v2021"
 
 
@@ -193,5 +193,5 @@ class LimitaAdministrativaRomania(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'webmaps\".\"limita_administrativa_romania'
+        db_table = 'webmap\".\"limita_administrativa_romania'
         verbose_name = "Limita administrativă România"
