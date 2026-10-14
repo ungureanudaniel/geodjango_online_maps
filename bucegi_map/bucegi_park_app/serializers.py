@@ -145,7 +145,7 @@ class LimitaSitN2K2016Serializer(SimpleGeomSerializer):
 class LimitaSectoarePNBSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = LimitaSectoarePNB
-
+        geo_field = 'geom'
 
 class LimitaAdministrativaRomaniaSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):

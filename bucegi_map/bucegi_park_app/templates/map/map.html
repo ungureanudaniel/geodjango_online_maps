@@ -847,12 +847,22 @@
     park_boundary: {
       url: '/api/limita-pnb-v2016/?format=geojson',
       style: { color: '#e8734a', weight: 3, fillOpacity: 0.1 },
-      popup: (props) => `<div class="popup-title">Limita Parcului Natural Bucegi</div>`
+      popup: (props) => 
+        return `
+          <div class="popup-title">Limita Parcului Natural Bucegi</div>
+          ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
+          `
     },
     ROSCI0013: {
       url: '/api/limita-sit-n2k-2016/?format=geojson',
       style: { color: '#9b59b6', weight: 2, fillOpacity: 0.15 },
-      popup: (props) => `<div class="popup-title">Sit Natura 2000 ROSCI0013</div>`
+      popup: (props) => {
+        return `
+          <div class="popup-title">Limita Sit Natura 2000 ROSCI0013</div>
+          ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
+          `;
+      }
+
     },
     zoning: {
       url: '/api/zonare-hg2011/?format=geojson',
@@ -913,7 +923,7 @@
       popup: (props) => {
         return `
           <div class="popup-title">${props.denumire_t || 'Vârf montan'}</div>
-          ${props.ele ? `<div class="popup-row"><span>Elevație</span><strong>${props.ele} m</strong></div>` : ''}
+          ${props.ele ? `<div class="popup-row"><span>Altitudine</span><strong>${props.ele} m</strong></div>` : ''}
           `;
       }
     },
@@ -930,7 +940,8 @@
         return `
         <div class="popup-title">Limita UAT</div>
         ${props.name ? `<div class="popup-row"><span>Nume UAT</span><strong>${props.name}</strong></div>` : ''}
-      `
+        ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
+        `
       },
     },
     county_limit: {
@@ -946,7 +957,8 @@
         return `
         <div class="popup-title">Limita Județ</div>
         ${props.name ? `<div class="popup-row"><span>Nume Județ</span><strong>${props.name}</strong></div>` : ''}
-      `
+        ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
+        `
       },
     },
     admin: {
