@@ -17,7 +17,7 @@ RUN echo "/usr/lib/python3/dist-packages" > \
     /usr/local/lib/python3.12/site-packages/system-gdal.pth
 
 WORKDIR /app
-
+RUN mkdir -p /app/static
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
