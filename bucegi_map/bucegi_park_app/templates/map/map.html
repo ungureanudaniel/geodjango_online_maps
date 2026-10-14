@@ -905,6 +905,7 @@
         <div class="popup-title">Limita UAT</div>
         ${props.name ? `<div class="popup-row"><span>Nume UAT</span><strong>${props.name}</strong></div>` : ''}
       `
+      },
     },
     county_limit: {
       url: '/api/limita-judet/?format=geojson',
@@ -921,11 +922,8 @@
         <div class="popup-title">Limita Județ</div>
         ${props.name ? `<div class="popup-row"><span>Nume Județ</span><strong>${props.name}</strong></div>` : ''}
       `
+      },
     },
-    {% comment %} forest: {
-      url: '/api/forest.geojson',
-      style: { fillColor: '#093117', weight: 0.5, color: '#0a3a1a', fillOpacity: 0.8 }
-    }, {% endcomment %}
     admin: {
       url: '/api/cladiri-administrative/?format=geojson',
       pointToLayer: (feature, latlng) => L.marker(latlng, {
