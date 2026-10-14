@@ -116,7 +116,7 @@ class LimitaAdministrativaJudetSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = LimitaAdministrativaJudet
         geo_field = 'geom'
-                fields = ['id', 'name', 'shape_area']
+        fields = ['id', 'name', 'shape_area']
 
 class LimitaAdministrativaUATSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
