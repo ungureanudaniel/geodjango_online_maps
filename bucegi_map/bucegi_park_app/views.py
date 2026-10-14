@@ -17,13 +17,10 @@ from .serializers import (
     TraseeTuristiceSerializer, TraseeTematiceSerializer,
     CladiriAdministrativeSerializer, InfrastructuraAgrementSerializer,
     ZonarePNBHG2011Serializer, ZonarePNBv2025Serializer,
-    LimitaRONPA006Serializer, LimitaROSCI0013OUG2025Serializer,
     AriiNaturaleOUG2016Serializer, AriiNaturalePropunereAPNBSerializer,
-    LimitaAdministrativaJudetSerializer, LimitaAdministrativaUATSerializer,
-    LimitaN2K2017Serializer, LimitaPNBv2016Serializer, LimitaPNBv2023Serializer,
-    LimitaSitN2K2016Serializer, LimitaSitN2K2023Serializer,
-    LimitaSectoarePNBSerializer, AriiProtejateRomaniaOUGSerializer,
-    ArieNaturalaLege2000Serializer, LimitaZonarePropusa2024Serializer,
+    LimitaAdministrativaJudetSerializer, LimitaAdministrativaUATSerializer, LimitaPNBv2016Serializer,
+    LimitaSitN2K2016Serializer,
+    LimitaSectoarePNBSerializer,
     LimitaAdministrativaRomaniaSerializer,
 )
 
