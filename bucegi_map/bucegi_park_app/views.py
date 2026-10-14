@@ -8,13 +8,10 @@ from rest_framework.permissions import AllowAny
 
 from .models import (
     TraseeTuristice, TraseeTematice, CladiriAdministrative,
-    InfrastructuraAgrement, ZonarePNBHG2011, ZonarePNBv2025,
-    LimitaRONPA006, LimitaROSCI0013OUG2025, AriiNaturaleOUG2016,
+    InfrastructuraAgrement, ZonarePNBHG2011, ZonarePNBv2025, AriiNaturaleOUG2016,
     AriiNaturalePropunereAPNB, LimitaAdministrativaJudet,
-    LimitaAdministrativaUAT, LimitaN2K2017, LimitaPNBv2016,
-    LimitaPNBv2023, LimitaSitN2K2016, LimitaSitN2K2023,
-    LimitaSectoarePNB, AriiProtejateRomaniaOUG, ArieNaturalaLege2000,
-    LimitaZonarePropusa2024, LimitaAdministrativaRomania,
+    LimitaAdministrativaUAT, LimitaPNBv2016, LimitaSitN2K2016,
+    LimitaSectoarePNB, LimitaAdministrativaRomania,
 )
 from .serializers import (
     TraseeTuristiceSerializer, TraseeTematiceSerializer,
@@ -85,16 +82,6 @@ class ZonarePNBv2025ViewSet(GeoReadOnlyViewSet):
     serializer_class = ZonarePNBv2025Serializer
 
 
-class LimitaRONPA006ViewSet(GeoReadOnlyViewSet):
-    model = LimitaRONPA006
-    serializer_class = LimitaRONPA006Serializer
-
-
-class LimitaROSCI0013OUG2025ViewSet(GeoReadOnlyViewSet):
-    model = LimitaROSCI0013OUG2025
-    serializer_class = LimitaROSCI0013OUG2025Serializer
-
-
 class AriiNaturaleOUG2016ViewSet(GeoReadOnlyViewSet):
     model = AriiNaturaleOUG2016
     serializer_class = AriiNaturaleOUG2016Serializer
@@ -117,20 +104,9 @@ class LimitaAdministrativaUATViewSet(GeoReadOnlyViewSet):
     srid = 0
 
 
-class LimitaN2K2017ViewSet(GeoReadOnlyViewSet):
-    model = LimitaN2K2017
-    serializer_class = LimitaN2K2017Serializer
-
-
 class LimitaPNBv2016ViewSet(GeoReadOnlyViewSet):
     model = LimitaPNBv2016
     serializer_class = LimitaPNBv2016Serializer
-
-
-class LimitaPNBv2023ViewSet(GeoReadOnlyViewSet):
-    model = LimitaPNBv2023
-    serializer_class = LimitaPNBv2023Serializer
-    srid = 0
 
 
 class LimitaSitN2K2016ViewSet(GeoReadOnlyViewSet):
@@ -138,31 +114,9 @@ class LimitaSitN2K2016ViewSet(GeoReadOnlyViewSet):
     serializer_class = LimitaSitN2K2016Serializer
 
 
-class LimitaSitN2K2023ViewSet(GeoReadOnlyViewSet):
-    model = LimitaSitN2K2023
-    serializer_class = LimitaSitN2K2023Serializer
-    srid = 0
-
-
 class LimitaSectoarePNBViewSet(GeoReadOnlyViewSet):
     model = LimitaSectoarePNB
     serializer_class = LimitaSectoarePNBSerializer
-
-
-class AriiProtejateRomaniaOUGViewSet(GeoReadOnlyViewSet):
-    model = AriiProtejateRomaniaOUG
-    serializer_class = AriiProtejateRomaniaOUGSerializer
-
-
-class ArieNaturalaLege2000ViewSet(GeoReadOnlyViewSet):
-    model = ArieNaturalaLege2000
-    serializer_class = ArieNaturalaLege2000Serializer
-
-
-class LimitaZonarePropusa2024ViewSet(GeoReadOnlyViewSet):
-    model = LimitaZonarePropusa2024
-    serializer_class = LimitaZonarePropusa2024Serializer
-    srid = 0
 
 
 class LimitaAdministrativaRomaniaViewSet(GeoReadOnlyViewSet):
