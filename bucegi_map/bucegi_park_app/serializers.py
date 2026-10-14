@@ -135,14 +135,14 @@ class LimitaPNBv2016Serializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = LimitaPNBv2016
         geo_field = 'geom'
-        fields = ['id', 'name', 'shape_area']
+        fields = ['id', 'text', 'localid', 'shape_area']
 
 
 class LimitaSitN2K2016Serializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = LimitaSitN2K2016
         geo_field = 'geom'
-        fields = ['id', 'name', 'shape_area']
+        fields = ['id', 'text', 'localid', 'shape_area']
 
 class LimitaSectoarePNBSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
