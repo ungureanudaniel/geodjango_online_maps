@@ -2,7 +2,7 @@ from django.contrib.gis.db import models
 
 
 # ─────────────────────────────────────────────
-# Schema: infrastructura_vizitare
+# used schema is 'webmaps'
 # ─────────────────────────────────────────────
 
 class TraseeTuristice(models.Model):
@@ -16,7 +16,7 @@ class TraseeTuristice(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'infrastructura_vizitare\".\"trasee_turistice_pnb'
+        db_table = 'webmaps\".\"trasee_turistice_pnb'
         verbose_name = "Traseu turistic"
         verbose_name_plural = "Trasee turistice PNB"
 
@@ -34,7 +34,7 @@ class TraseeTematice(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'infrastructura_vizitare\".\"trasee_tematice_pnb'
+        db_table = 'webmaps\".\"trasee_tematice_pnb'
         verbose_name = "Traseu tematic"
         verbose_name_plural = "Trasee tematice PNB"
 
@@ -54,7 +54,7 @@ class CladiriAdministrative(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'infrastructura_vizitare\".\"Cladiri administrative APNB'
+        db_table = 'webmaps\".\"cladiri_administrative'
         verbose_name = "Clădire administrativă"
         verbose_name_plural = "Clădiri administrative APNB"
 
@@ -65,7 +65,7 @@ class InfrastructuraAgrement(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'infrastructura_vizitare\".\"infrastructura_agrement'
+        db_table = 'webmaps\".\"infrastructura_agrement'
         verbose_name = "Infrastructură agrement"
         verbose_name_plural = "Infrastructură agrement"
 
@@ -85,7 +85,7 @@ class ZonarePNBHG2011(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"ZONARE_PNB_HG187_2011'
+        db_table = 'webmaps\".\"ZONARE_PNB_HG187_2011'
         verbose_name = "Zonare PNB HG 187/2011"
         verbose_name_plural = "Zonare PNB HG 187/2011"
 
@@ -99,35 +99,9 @@ class ZonarePNBv2025(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Zonare_PNB_v2025'
+        db_table = 'webmaps\".\"zonare_pnb_v2025'
         verbose_name = "Zonare PNB v2025"
         verbose_name_plural = "Zonare PNB v2025"
-
-
-class LimitaRONPA006(models.Model):
-    """Official RONPA006 park boundary OUG49/2016 — MultiPolygon, EPSG:3844."""
-    geom = models.MultiPolygonField(srid=3844)
-    localid = models.CharField(max_length=9, null=True, blank=True)
-    characters = models.CharField(max_length=95, null=True, blank=True)
-    text = models.CharField(max_length=254, null=True, blank=True)
-    arie = models.FloatField(null=True, blank=True)
-    tip_anp = models.CharField(max_length=100, null=True, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita_RONPA006_OUG49_2016_v2025'
-        verbose_name = "Limita RONPA006 OUG49/2016 v2025"
-        verbose_name_plural = "Limite RONPA006 OUG49/2016 v2025"
-
-
-class LimitaROSCI0013OUG2025(models.Model):
-    """ROSCI0013 Natura 2000 boundary OUG49/2016 — MultiPolygon, EPSG:3844."""
-    geom = models.MultiPolygonField(srid=3844)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita ROSCI0013 OUG49-2016 v2025'
-        verbose_name = "Limita ROSCI0013 OUG49-2016 v2025"
 
 
 class AriiNaturaleOUG2016(models.Model):
@@ -142,7 +116,7 @@ class AriiNaturaleOUG2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = '"limite"."Arii naturale protejate, conform OUG 49/2016"'
+        db_table = 'webmaps\".\"arii_naturale_protejate_oug49_2016'
         verbose_name = "Arii naturale protejate OUG 49/2016"
 
 
@@ -159,8 +133,8 @@ class AriiNaturalePropunereAPNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = '"limite"."Rezervatii propuse Bucegi v2"'
-        verbose_name = "Arii naturale protejate propunere APNB"
+        db_table = 'webmaps\".\"rezervatii_propuse_pnb_v2'
+        verbose_name = "Arii naturale protejate, conf. propunere APNB"
 
 
 class LimitaAdministrativaJudet(models.Model):
@@ -169,7 +143,7 @@ class LimitaAdministrativaJudet(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita administrativa Judet - PN BUCEGI'
+        db_table = 'webmaps\".\"limita_administrativa_judet'
         verbose_name = "Limita administrativă Județ PN Bucegi"
 
 
@@ -179,18 +153,8 @@ class LimitaAdministrativaUAT(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita administrativa UAT - PN BUCEGI'
+        db_table = 'webmaps\".\"limita_administrativa_uat'
         verbose_name = "Limita administrativă UAT PN Bucegi"
-
-
-class LimitaN2K2017(models.Model):
-    """Natura 2000 boundary 2017 — MultiPolygon, EPSG:3844."""
-    geom = models.MultiPolygonField(srid=3844)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita N2K 2017'
-        verbose_name = "Limita N2K 2017"
 
 
 class LimitaPNBv2016(models.Model):
@@ -199,18 +163,8 @@ class LimitaPNBv2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita PN BUCEGI v2016'
-        verbose_name = "Limita PN BUCEGI v2016"
-
-
-class LimitaPNBv2023(models.Model):
-    """Park boundary v2023 — MultiLineString, SRID=0."""
-    geom = models.MultiLineStringField(srid=0)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita PN BUCEGI v2023'
-        verbose_name = "Limita PN BUCEGI v2023"
+        db_table = 'webmaps\".\"limita_parc_oug_49_2016'
+        verbose_name = "Limita PN BUCEGI OUG 49/2016"
 
 
 class LimitaSitN2K2016(models.Model):
@@ -219,18 +173,8 @@ class LimitaSitN2K2016(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita Sit N2K ROSCI0013 v2016'
+        db_table = 'webmaps\".\"limita_sit_n2k_rosci0013'
         verbose_name = "Limita Sit N2K ROSCI0013 v2016"
-
-
-class LimitaSitN2K2023(models.Model):
-    """Natura 2000 site boundary 2023 — MultiLineString, SRID=0."""
-    geom = models.MultiLineStringField(srid=0)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita Sit N2K ROSCI0013 v2023'
-        verbose_name = "Limita Sit N2K ROSCI0013 v2023"
 
 
 class LimitaSectoarePNB(models.Model):
@@ -239,38 +183,8 @@ class LimitaSectoarePNB(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita sectoare PNB v2021'
+        db_table = 'webmaps\".\"limite_sectoare_pnb_v2021'
         verbose_name = "Limita sectoare PNB v2021"
-
-
-class AriiProtejateRomaniaOUG(models.Model):
-    """All protected areas Romania OUG49/2016 — MultiPolygon, EPSG:3844."""
-    geom = models.MultiPolygonField(srid=3844)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"ARII_PROTEJATE_ROMANIA_OUG492016_EPSG_3844'
-        verbose_name = "Arii protejate România OUG49/2016"
-
-
-class ArieNaturalaLege2000(models.Model):
-    """Protected area per Law 5/2000 — Point, EPSG:3844."""
-    geom = models.PointField(srid=3844)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Arie naturală protejată, conform Legii nr. 5 / 2000:'
-        verbose_name = "Arie naturală protejată Legea 5/2000"
-
-
-class LimitaZonarePropusa2024(models.Model):
-    """Proposed zoning boundary 2024 — MultiPolygon, SRID=0."""
-    geom = models.MultiPolygonField(srid=0)
-
-    class Meta:
-        managed = False
-        db_table = 'limite\".\"Limita zonare propusa PNB v2024'
-        verbose_name = "Limita zonare propusă PNB v2024"
 
 
 class LimitaAdministrativaRomania(models.Model):
@@ -279,5 +193,5 @@ class LimitaAdministrativaRomania(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'limite\".\"Limita administrativa Romania'
+        db_table = 'webmaps\".\"limita_administrativa_romania'
         verbose_name = "Limita administrativă România"

@@ -2,6 +2,8 @@ import requests
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 from rest_framework import viewsets
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.permissions import AllowAny
 
 from .models import (
@@ -30,7 +32,7 @@ from .serializers import (
 
 WGS84 = 4326
 
-
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class GeoReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Base viewset: read-only, public, reprojects geom to WGS84 for Leaflet.

@@ -8,13 +8,11 @@ class GeoJSONRenderer(JSONRenderer):
     charset = 'utf-8'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        # Paginated response: {"results": [...]}
         if isinstance(data, dict) and 'results' in data and isinstance(data['results'], list):
             data = {
                 'type': 'FeatureCollection',
                 'features': data['results'],
             }
-        # Plain list response: [{...}, {...}]
         elif isinstance(data, list):
             data = {
                 'type': 'FeatureCollection',

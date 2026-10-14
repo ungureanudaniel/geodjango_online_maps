@@ -34,12 +34,25 @@ class WGS84GeoFeatureSerializer(GeoFeatureModelSerializer):
                     g = g.clone() # Clone the geometry to avoid modifying the original
                     g.transform(4326) # Transform to WGS84
                 data['geometry'] = json.loads(g.geojson)
+                # reduce precision for speed
+                data['geometry'] = self._round_coords(data['geometry'], precision=6)
             except Exception:
                 pass
         elif isinstance(geom, dict):
             pass
 
         return data
+
+def _round_coords(self, geom, precision):
+    if geom['type']= 'Point':
+        geom['coordinates'] = [round(coord, precision) for coord in geom['coordinates']]
+    elif geom['type'] in ['LineString', 'MultiPoint']:
+        geom['coordinates'] = [[round(coord, precision) for coord in point] for point in geom['coordinates']]
+    elif geom['type'] in ['Polygon', 'MultiLineString']:
+        geom['coordinates'] = [[[round(coord, precision) for coord in point] for point in ring] for ring in geom['coordinates']]
+    elif geom['type'] == 'MultiPolygon':
+        geom['coordinates'] = [[[[round(coord, precision) for coord in point] for point in ring] for ring in polygon] for polygon in geom['coordinates']]
+    return geom
 
 
 class TraseeTuristiceSerializer(WGS84GeoFeatureSerializer):
