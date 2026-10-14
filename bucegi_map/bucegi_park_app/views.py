@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 from rest_framework.permissions import AllowAny
 
 from .models import (
-    TraseeTuristice, TraseeTematice, CladiriAdministrative,
+    Peaks, TraseeTuristice, TraseeTematice, CladiriAdministrative,
     InfrastructuraAgrement, ZonarePNBHG2011, ZonarePNBv2025, AriiNaturaleOUG2016,
     AriiNaturalePropunereAPNB, LimitaAdministrativaJudet,
     LimitaAdministrativaUAT, LimitaPNBv2016, LimitaSitN2K2016,
@@ -20,7 +20,7 @@ from .serializers import (
     AriiNaturaleOUG2016Serializer, AriiNaturalePropunereAPNBSerializer,
     LimitaAdministrativaJudetSerializer, LimitaAdministrativaUATSerializer, LimitaPNBv2016Serializer,
     LimitaSitN2K2016Serializer,
-    LimitaSectoarePNBSerializer,
+    LimitaSectoarePNBSerializer, PeaksSerializer,
     LimitaAdministrativaRomaniaSerializer,
 )
 
@@ -44,8 +44,6 @@ class GeoReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-# ── infrastructura_vizitare ──────────────────────────────────────────────────
-
 class TraseeTuristiceViewSet(GeoReadOnlyViewSet):
     model = TraseeTuristice
     serializer_class = TraseeTuristiceSerializer
@@ -57,6 +55,11 @@ class TraseeTematiceViewSet(GeoReadOnlyViewSet):
     serializer_class = TraseeTematiceSerializer
 
 
+class PeaksViewSet(GeoReadOnlyViewSet):
+    model = Peaks
+    serializer_class = PeaksSerializer
+
+
 class CladiriAdministrativeViewSet(GeoReadOnlyViewSet):
     model = CladiriAdministrative
     serializer_class = CladiriAdministrativeSerializer
@@ -66,8 +69,6 @@ class InfrastructuraAgrementViewSet(GeoReadOnlyViewSet):
     model = InfrastructuraAgrement
     serializer_class = InfrastructuraAgrementSerializer
 
-
-# ── limite ───────────────────────────────────────────────────────────────────
 
 class ZonarePNBHG2011ViewSet(GeoReadOnlyViewSet):
     model = ZonarePNBHG2011

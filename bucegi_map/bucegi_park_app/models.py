@@ -167,6 +167,18 @@ class LimitaPNBv2016(models.Model):
         verbose_name = "Limita PN BUCEGI OUG 49/2016"
 
 
+class Peaks(models.Model):
+    """Mountain peaks — Point, EPSG:3844."""
+    geom = models.PointField(srid=3844)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    ele = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'webmap\".\"peaks'
+        verbose_name = "Vârf montan"
+        verbose_name_plural = "Vârfuri montane"
+
 class LimitaSitN2K2016(models.Model):
     """Natura 2000 site boundary 2016 — MultiLineString, EPSG:3844."""
     geom = models.MultiLineStringField(srid=3844)

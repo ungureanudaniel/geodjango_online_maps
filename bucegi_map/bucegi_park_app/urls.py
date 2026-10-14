@@ -22,6 +22,8 @@ router.register(r'limita-sit-n2k-2016',     views.LimitaSitN2K2016ViewSet,      
 router.register(r'limita-sectoare',         views.LimitaSectoarePNBViewSet,        basename='limita-sectoare')
 router.register(r'limita-administrativa-ro',views.LimitaAdministrativaRomaniaViewSet, basename='limita-administrativa-ro')
 
+# geografie
+router.register(r'varfuri_montane', views.PeaksViewSet, basename='peaks')
 urlpatterns = [
     path('api/', include(router.urls)),
 

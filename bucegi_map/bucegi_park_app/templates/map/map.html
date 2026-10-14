@@ -537,6 +537,21 @@
     <div class="layer-dash" style="border-color:#9b59b6;"></div>
     <span class="layer-label" data-ro="Sit Natura 2000" data-en="Natura 2000 Site">Sit Natura 2000</span>
   </div>
+  <div class="layer-item active" data-layer="theme_trails" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Trasee tematice" data-en="Theme trails">Trasee tematice</span>
+  </div>
+  <div class="layer-item active" data-layer="peaks" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Vârfuri" data-en="Highest Peaks">Vârfuri</span>
+  </div>
+  {% comment %} <div class="layer-item active" data-layer="tourist_trails" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Trasee turistice" data-en="Tourist trails">Trasee turistice</span>
+  </div> {% endcomment %}
   {% comment %} <div class="layer-group" id="grp-reserves">Rezervații naturale</div>
   <div class="layer-item" data-layer="reservesoug49" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
@@ -583,6 +598,22 @@
     <div class="legend-box" style="background:#ffff5f; opacity:0.7;"></div>
     <span class="legend-label" data-ro="Zonă de Dezvoltare Durabilă" data-en="Sustainable Development Zone">ZDD — Zonă de Dezvoltare Durabilă</span>
   </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#e8734a;"></div>
+    <span class="legend-label" data-ro="Trasee tematice" data-en="Theme trails">Trasee tematice</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#e8734a;"></div>
+    <span class="legend-label" data-ro="Limite UAT" data-en="Commune Boundaries">Limite UAT</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#e8734a;"></div>
+    <span class="legend-label" data-ro="Limite judet" data-en="County Boundaries">Limite de județ</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dash" style="border-color:#e8734a;"></div>
+    <span class="legend-label" data-ro="Vârfuri" data-en="Highest Peaks">Vârfuri</span>
+  </div>
   {% comment %} <div class="legend-item">
     <div class="legend-dash" style="background:#000000; opacity:0.7;"></div>
     <span class="legend-label" data-ro="Rezervații naturale conform OUG nr. 49 / 2016" data-en="Natural reserves according to OUG no. 49 / 2016">Rezervații naturale conform OUG nr. 49 / 2016</span>
@@ -627,11 +658,15 @@
       grpLimits:   'Limite și zonare',
       boundary:    'Limita parcului',
       zoning:      'Zonare parc, H.G. 187/2011',
+      county:      'Limita județului',
+      uat:         'Limita unității administrativ-teritoriale',
       n2site:      'Sit Natura 2000 Bucegi',
       grpVeg:      'Vegetație',
       grpTrails:   'Trasee',
       grpPoi:      'Puncte de interes',
       grpAgrement: 'Infrastructură agrement',
+      theme_trails:'Trasee tematice',
+      tourist_trails:'Trasee turistice',
       mobInfo:     'Parc',
       mobLayers:   'Straturi',
       mobLegend:   'Legendă',
@@ -681,7 +716,11 @@
       legendTitle: 'Legend',
       grpLimits:   'Limits & Zoning',
       boundary:    'Park Boundary',
+      theme_trails:'Theme trails',
+      tourist_trails:'Tourist trails',
       zoning:      'Park Zoning, H.G. 187/2011',
+      county:      'County Boundary',
+      uat:         'Commune Boundary',
       n2site:      'Natura 2000 Site',
       grpVeg:      'Vegetation',
       grpTrails:   'Trails',
@@ -796,12 +835,12 @@
 
   const LAYER_CONFIG = {
     park_boundary: {
-      url: '/api/limita-ronpa006/?format=geojson',
+      url: '/api/limita-pnb-v2016/?format=geojson',
       style: { color: '#e8734a', weight: 3, fillOpacity: 0.1 },
       popup: (props) => `<div class="popup-title">Limita Parcului Natural Bucegi</div>`
     },
     ROSCI0013: {
-      url: '/api/limita-rosci0013-oug/?format=geojson',
+      url: '/api/limita-sit-n2k-2016/?format=geojson',
       style: { color: '#9b59b6', weight: 2, fillOpacity: 0.15 },
       popup: (props) => `<div class="popup-title">Sit Natura 2000 ROSCI0013</div>`
     },
@@ -826,6 +865,62 @@
           ${props.area_ha ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.area_ha)} ha</strong></div>` : ''}
         `;
       }
+    },
+    theme_trails: {
+      url: '/api/trasee-tematice/?format=geojson',
+      style: { color: '#2fd5f6', weight: 2, fillOpacity: 0.15 },
+      popup: (props) => {
+        return `
+          <div class="popup-title">${props.denumire_t || 'Traseu tematic'}</div>
+          ${props.distanta_m ? `<div class="popup-row"><span>Lungime</span><strong>${props.distanta_m} km</strong></div>` : ''}
+          ${props.dificultat ? `<div class="popup-row"><span>Dificultate</span><strong>${props.dificultat}</strong></div>` : ''}
+          ${props.timp ? `<div class="popup-row"><span>Timp</span><strong>${props.timp}</strong></div>` : ''}
+          `;
+      }
+    },
+    peaks: {
+      url: '/api/peaks/?format=geojson',
+      style: { color: '#2fd5f6', weight: 2, fillOpacity: 0.15 },
+      popup: (props) => {
+        return `
+          <div class="popup-title">${props.denumire_t || 'Traseu tematic'}</div>
+          ${props.distanta_m ? `<div class="popup-row"><span>Lungime</span><strong>${props.distanta_m} km</strong></div>` : ''}
+          ${props.dificultat ? `<div class="popup-row"><span>Dificultate</span><strong>${props.dificultat}</strong></div>` : ''}
+          ${props.timp ? `<div class="popup-row"><span>Timp</span><strong>${props.timp}</strong></div>` : ''}
+          `;
+      }
+    },
+    uat_limit: {
+      url: '/api/limita-uat/?format=geojson',
+      style: {
+        color: '#444444',
+        weight: 2,
+        fillOpacity: 0,
+        dashArray: '12, 4, 2, 4, 2, 4',
+        lineCap: 'round',
+        lineJoin: 'round'
+      },
+      popup: (props) => {
+        return `
+        <div class="popup-title">Limita UAT</div>
+        ${props.name ? `<div class="popup-row"><span>Nume UAT</span><strong>${props.name}</strong></div>` : ''}
+      `
+    },
+    county_limit: {
+      url: '/api/limita-judet/?format=geojson',
+      style: {
+        color: '#0d0505',
+        weight: 2,
+        fillOpacity: 0,
+        dashArray: '12, 4, 2, 4',
+        lineCap: 'round',
+        lineJoin: 'round'
+      },
+      popup: (props) => {
+        return `
+        <div class="popup-title">Limita Județ</div>
+        ${props.name ? `<div class="popup-row"><span>Nume Județ</span><strong>${props.name}</strong></div>` : ''}
+      `
     },
     {% comment %} forest: {
       url: '/api/forest.geojson',

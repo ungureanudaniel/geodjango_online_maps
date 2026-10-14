@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .models import (
     TraseeTuristice, LimitaSectoarePNB, TraseeTematice, CladiriAdministrative,
     InfrastructuraAgrement, ZonarePNBHG2011, ZonarePNBv2025, AriiNaturaleOUG2016,
-    AriiNaturalePropunereAPNB, LimitaAdministrativaJudet,
+    AriiNaturalePropunereAPNB, Peaks, LimitaAdministrativaJudet,
     LimitaAdministrativaUAT, LimitaPNBv2016, LimitaSitN2K2016, LimitaAdministrativaRomania,
 )
 
@@ -120,6 +120,10 @@ class LimitaAdministrativaJudetSerializer(SimpleGeomSerializer):
 class LimitaAdministrativaUATSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = LimitaAdministrativaUAT
+
+class PeaksSerializer(SimpleGeomSerializer):
+    class Meta(SimpleGeomSerializer.Meta):
+        model = Peaks
 
 
 class LimitaPNBv2016Serializer(SimpleGeomSerializer):
