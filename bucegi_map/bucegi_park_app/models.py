@@ -140,6 +140,8 @@ class AriiNaturalePropunereAPNB(models.Model):
 class LimitaAdministrativaJudet(models.Model):
     """County administrative boundary — MultiPolygon, EPSG:3844."""
     geom = models.MultiPolygonField(srid=3844)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    shape_area = models.FloatField(null=True, blank=True)
 
     class Meta:
         managed = False
@@ -150,7 +152,9 @@ class LimitaAdministrativaJudet(models.Model):
 class LimitaAdministrativaUAT(models.Model):
     """UAT administrative boundary — MultiPolygon, SRID=0."""
     geom = models.MultiPolygonField(srid=0)
-
+    name = models.CharField(max_length=100, null=True, blank=True)
+    shape_area = models.FloatField(null=True, blank=True)
+    
     class Meta:
         managed = False
         db_table = 'webmap\".\"limita_administrativa_uat'
@@ -182,7 +186,7 @@ class Peaks(models.Model):
 class LimitaSitN2K2016(models.Model):
     """Natura 2000 site boundary 2016 — MultiLineString, EPSG:3844."""
     geom = models.MultiLineStringField(srid=3844)
-
+    arie = models.FloatField(null=True, blank=True)
     class Meta:
         managed = False
         db_table = 'webmap\".\"limita_sit_n2k_rosci0013'

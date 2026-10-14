@@ -542,6 +542,16 @@
     <div class="layer-dash" style="color:'#d4a843', weight: 3, opacity: 0.9;"></div>
     <span class="layer-label" data-ro="Trasee tematice" data-en="Theme trails">Trasee tematice</span>
   </div>
+  <div class="layer-item active" data-layer="uat_limit" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Limite UAT" data-en="UAT Limits">Limite UAT</span>
+  </div>
+  <div class="layer-item active" data-layer="county_limit" onclick="toggleLayer(this)">
+    <div class="layer-toggle"></div>
+    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <span class="layer-label" data-ro="Limite de județ" data-en="County Limits">Limite de județ</span>
+  </div>
   <div class="layer-item active" data-layer="peaks" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
     <div class="layer-dash" style="border-color:#9b51b6;"></div>
@@ -910,10 +920,9 @@
     uat_limit: {
       url: '/api/limita-uat/?format=geojson',
       style: {
-        color: '#444444',
-        weight: 2,
-        fillOpacity: 0,
-        dashArray: '12, 4, 2, 4, 2, 4',
+        color: '#888888',
+        weight: 1.5,
+        dashArray: '6, 4',
         lineCap: 'round',
         lineJoin: 'round'
       },
@@ -927,9 +936,8 @@
     county_limit: {
       url: '/api/limita-judet/?format=geojson',
       style: {
-        color: '#0d0505',
-        weight: 2,
-        fillOpacity: 0,
+        color: '#222222',
+        weight: 2.5,
         dashArray: '12, 4, 2, 4',
         lineCap: 'round',
         lineJoin: 'round'
