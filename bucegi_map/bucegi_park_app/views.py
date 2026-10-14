@@ -59,14 +59,6 @@ class PeaksViewSet(GeoReadOnlyViewSet):
     model = Peaks
     serializer_class = PeaksSerializer
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        # Filter peaks with elevation higher than 2000 m
-        qs = qs.filter(ele__gt=2000)
-        # exclude names that are null or empty
-        qs = qs.exclude(name__isnull=True).exclude(name__exact='')
-        return qs
-
 class CladiriAdministrativeViewSet(GeoReadOnlyViewSet):
     model = CladiriAdministrative
     serializer_class = CladiriAdministrativeSerializer
