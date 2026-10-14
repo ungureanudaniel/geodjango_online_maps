@@ -127,6 +127,8 @@ class LimitaAdministrativaUATSerializer(SimpleGeomSerializer):
 class PeaksSerializer(SimpleGeomSerializer):
     class Meta(SimpleGeomSerializer.Meta):
         model = Peaks
+        geo_field = 'geom'
+        fields = ['id', 'name', 'ele']
 
 
 class LimitaPNBv2016Serializer(SimpleGeomSerializer):
