@@ -847,11 +847,12 @@
     park_boundary: {
       url: '/api/limita-pnb-v2016/?format=geojson',
       style: { color: '#e8734a', weight: 3, fillOpacity: 0.1 },
-      popup: (props) => 
+      popup: (props) => {
         return `
           <div class="popup-title">Limita Parcului Natural Bucegi</div>
           ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
           `
+      }
     },
     ROSCI0013: {
       url: '/api/limita-sit-n2k-2016/?format=geojson',
@@ -862,7 +863,6 @@
           ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
           `;
       }
-
     },
     zoning: {
       url: '/api/zonare-hg2011/?format=geojson',
