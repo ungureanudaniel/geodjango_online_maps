@@ -879,7 +879,7 @@
       }
     },
     peaks: {
-      url: '/api/peaks/?format=geojson',
+      url: '/api/varfuri_montane/?format=geojson',
       style: { color: '#2fd5f6', weight: 2, fillOpacity: 0.15 },
       popup: (props) => {
         return `
@@ -944,9 +944,11 @@
       popup: (props) => {
         const t = T[currentLang];
         const name = currentLang === 'ro' ? (props.Nume || props.name) : (props.Name || props.name);
-        return `<div class="popup-title">${name || 'Administrație'}</div>
+        return `
+          <div class="popup-title">${name || 'Administrație'}</div>
           ${props.address || props.adresa ? `<div class="popup-row"><span>${t.address}</span><strong>${props.address || props.adresa}</strong></div>` : ''}
-          ${props.phone || props.telefon ? `<div class="popup-row"><span>${t.phone}</span><strong>${props.phone || props.telefon}</strong></div>` : ''}`
+          ${props.phone || props.telefon ? `<div class="popup-row"><span>${t.phone}</span><strong>${props.phone || props.telefon}</strong></div>` : ''}
+          `
       }
     },
     reservesoug49: {
