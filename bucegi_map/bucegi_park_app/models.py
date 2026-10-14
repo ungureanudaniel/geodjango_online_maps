@@ -164,6 +164,8 @@ class LimitaAdministrativaUAT(models.Model):
 class LimitaPNBv2016(models.Model):
     """Park boundary v2016 — MultiPolygon, EPSG:3844."""
     geom = models.MultiPolygonField(srid=3844)
+    text = models.CharField(max_length=254, null=True, blank=True)
+    arie = models.FloatField(null=True, blank=True)
 
     class Meta:
         managed = False
@@ -186,7 +188,9 @@ class Peaks(models.Model):
 class LimitaSitN2K2016(models.Model):
     """Natura 2000 site boundary 2016 — MultiLineString, EPSG:3844."""
     geom = models.MultiLineStringField(srid=3844)
+    localid = models.CharField(max_length=20, null=True, blank=True)
     arie = models.FloatField(null=True, blank=True)
+
     class Meta:
         managed = False
         db_table = 'webmap\".\"limita_sit_n2k_rosci0013'
