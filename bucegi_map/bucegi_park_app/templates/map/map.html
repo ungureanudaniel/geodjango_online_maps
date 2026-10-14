@@ -851,7 +851,7 @@
         return `
           <div class="popup-title">Limita Parcului Natural Bucegi</div>
           ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
-          `
+          `;
       }
     },
     ROSCI0013: {
@@ -882,7 +882,7 @@
         };
         return `
           <div class="popup-tag">${zoneNames[props.zonare_int] || props.zonare_int}</div>
-          ${props.area_ha ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.area_ha)} ha</strong></div>` : ''}
+          ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
         `;
       }
     },
@@ -922,7 +922,7 @@
       }),
       popup: (props) => {
         return `
-          <div class="popup-title">${props.denumire_t || 'Vârf montan'}</div>
+          <div class="popup-title">${props.name || 'Vârf montan'}</div>
           ${props.ele ? `<div class="popup-row"><span>Altitudine</span><strong>${props.ele} m</strong></div>` : ''}
           `;
       }
