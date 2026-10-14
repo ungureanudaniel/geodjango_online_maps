@@ -40,7 +40,7 @@ class WGS84GeoFeatureSerializer(GeoFeatureModelSerializer):
         return data
 
 def _round_coords(self, geom, precision):
-    if geom['type']= 'Point':
+    if geom['type'] == 'Point':
         geom['coordinates'] = [round(coord, precision) for coord in geom['coordinates']]
     elif geom['type'] in ['LineString', 'MultiPoint']:
         geom['coordinates'] = [[round(coord, precision) for coord in point] for point in geom['coordinates']]
