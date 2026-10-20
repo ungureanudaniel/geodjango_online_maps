@@ -531,6 +531,7 @@
     <div class="layer-toggle"></div>
     <div class="layer-swatch" style="background:#7b9e6b; opacity:0.8;"></div>
     <span class="layer-label" data-ro="Zonare parc, H.G. 187/2011" data-en="Park Zoning, H.G. 187/2011">Zonare parc, H.G. 187/2011</span>
+    
   </div>
   <div class="layer-item active" data-layer="ROSCI0013" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
@@ -582,7 +583,7 @@
 </div>
 
 <!-- Legend -->
-<div id="legend">
+{% comment %} <div id="legend">
   <div id="legend-header">Legendă</div>
   <div class="legend-item">
     <div class="legend-dash" style="border-color:#e8734a;"></div>
@@ -624,15 +625,7 @@
     <div class="legend-dash" style="border-color:#e8734a;"></div>
     <span class="legend-label" data-ro="Vârfuri" data-en="Highest Peaks">Vârfuri</span>
   </div>
-  {% comment %} <div class="legend-item">
-    <div class="legend-dash" style="background:#000000; opacity:0.7;"></div>
-    <span class="legend-label" data-ro="Rezervații naturale conform OUG nr. 49 / 2016" data-en="Natural reserves according to OUG no. 49 / 2016">Rezervații naturale conform OUG nr. 49 / 2016</span>
-  </div> {% endcomment %}
-  {% comment %} <div class="legend-item">
-    <div class="legend-line" style="background:#0432b1; opacity:0.7;"></div>
-    <span class="legend-label" data-ro="Rezervații naturale propuse APN BUCEGI" data-en="Natural reserves proposed by APN BUCEGI">Rezervații naturale propuse APN BUCEGI</span>
-  </div> {% endcomment %}
-</div>
+</div> {% endcomment %}
 
 <div id="coords-bar">Plasați cursorul pe hartă</div>
 <div id="error-toast"></div>

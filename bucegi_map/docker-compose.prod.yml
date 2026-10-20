@@ -21,7 +21,16 @@ services:
       - DJANGO_ALLOWED_HOSTS=${ALLOWED_HOSTS}
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
+  grafana:
+    image: grafana/grafana-enterprise:latest
+    container_name: bucegi_grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}  
+      - GF_ROOT_URL=${GRAFANA_ROOT_URL}
+      - GF_SERVER_DOMAIN=${GRAFANA_DOMAIN}
+    volumes:
+      - grafana_data:/var/lib/grafana
   nginx:
     image: nginx:alpine
     container_name: bucegi_nginx
