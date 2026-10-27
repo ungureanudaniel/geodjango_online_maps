@@ -11,7 +11,7 @@ services:
       - .:/app
       - static_volume:/app/staticfiles
     ports:
-      - "8095:8000"
+      - "127.0.0.1:8095:8000"
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -21,31 +21,6 @@ services:
       - DJANGO_ALLOWED_HOSTS=${ALLOWED_HOSTS}
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  grafana:
-    image: grafana/grafana-enterprise:latest
-    container_name: bucegi_grafana
-    restart: unless-stopped
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}  
-      - GF_ROOT_URL=${GRAFANA_ROOT_URL}
-      - GF_SERVER_DOMAIN=${GRAFANA_DOMAIN}
-    volumes:
-      - grafana_data:/var/lib/grafana
-  nginx:
-    image: nginx:alpine
-    container_name: bucegi_nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl/map.bucegipark.ro.crt:/etc/nginx/ssl/map.bucegipark.ro.crt:ro
-      - ./nginx/ssl/map.bucegipark.ro.key:/etc/nginx/ssl/map.bucegipark.ro.key:ro
-      - static_volume:/static:ro
-    depends_on:
-      - web
-
 volumes:
   static_volume:
   grafana_data:
