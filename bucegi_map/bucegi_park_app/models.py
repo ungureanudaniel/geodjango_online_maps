@@ -217,3 +217,17 @@ class LimitaAdministrativaRomania(models.Model):
         managed = False
         db_table = 'webmap\".\"limita_administrativa_romania'
         verbose_name = "Limita administrativă România"
+
+
+class BearSightiings(models.Model):
+    """Bear sightings — Point, EPSG:3844."""
+    geom = models.PointField(srid=3844)
+    sighting_date = models.DateField(null=True, blank=True)
+    location_description = models.CharField(max_length=254, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'webmap\".\"bear_sightings'
+        verbose_name = "Bear Sighting"
+        verbose_name_plural = "Bear Sightings"
