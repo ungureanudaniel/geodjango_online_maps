@@ -172,7 +172,6 @@
       background: rgba(45, 90, 61, 0.2);
       display: flex; align-items: center; gap: 7px;
     }
-
     .layer-group {
       padding: 6px 14px 3px;
       font-size: 0.57rem;
@@ -182,7 +181,6 @@
       background: rgba(45, 90, 61, 0.1);
       border-bottom: 1px solid rgba(107, 158, 120, 0.06);
     }
-
     .layer-item {
       display: flex; align-items: center; gap: 9px;
       padding: 8px 14px;
@@ -190,19 +188,15 @@
       transition: background 0.15s;
       border-bottom: 1px solid rgba(107, 158, 120, 0.07);
     }
-
     .layer-item:last-child { border-bottom: none; }
     .layer-item:hover { background: rgba(45, 90, 61, 0.25); }
-
     .layer-toggle {
       width: 15px; height: 15px; border-radius: 3px;
       border: 1.5px solid var(--panel-border);
       flex-shrink: 0; display: flex; align-items: center; justify-content: center;
       transition: all 0.15s;
     }
-
     .layer-item.active .layer-toggle { border-color: var(--fern); background: rgba(107, 158, 120, 0.3); }
-
     .layer-item.active .layer-toggle::after {
       content: '';
       width: 7px; height: 4px;
@@ -210,7 +204,6 @@
       border-bottom: 2px solid var(--fern);
       transform: rotate(-45deg) translate(1px, -1px);
     }
-
     .layer-swatch { width: 18px; height: 4px; border-radius: 2px; flex-shrink: 0; }
     .layer-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin: 0 4px; }
     .layer-dash {
@@ -223,7 +216,6 @@
       display: inline-block;
       vertical-align: middle;
     }
-
     /* Peaks marker swatch is a taller square (circle + glyph) */
     .layer-item[data-layer="peaks"] .layer-dash {
       width: 24px;
@@ -536,21 +528,34 @@
     <span id="layers-title">Straturi hartă</span>
   </div>
 
-  <div class="layer-group" id="grp-limits">Limite și zonare</div>
   <div class="layer-item active" data-layer="park_boundary" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
-    <div class="layer-dash" style="border-color:#e8734a;"></div>
+    <svg class="layer-dash layer-dash--area" width="24" height="10" viewBox="0 0 24 10" aria-hidden="true">
+      <rect x="1" y="1.5" width="22" height="7"
+            fill="#e8734a" fill-opacity="0.1"
+            stroke="#e8734a" stroke-width="3"
+            stroke-linejoin="round"/>
+    </svg>
     <span class="layer-label" data-ro="Limita parcului" data-en="Park Boundary">Limita parcului</span>
   </div>
   <div class="layer-item" data-layer="zoning" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
-    <div class="layer-swatch" style="background:#7b9e6b; opacity:0.8;"></div>
-    <span class="layer-label" data-ro="Zonare parc, H.G. 187/2011" data-en="Park Zoning, H.G. 187/2011">Zonare parc, H.G. 187/2011</span>
-    
+    <svg class="layer-dash layer-dash--zoning" width="24" height="10" viewBox="0 0 24 10" aria-hidden="true">
+      <rect x="0"  y="0" width="6"  height="10" fill="ZPI_COLOR" fill-opacity="0.65" stroke="#ff8686" stroke-width="0.5"/>
+      <rect x="6"  y="0" width="6"  height="10" fill="ZPS_COLOR" fill-opacity="0.65" stroke="#cc0000" stroke-width="0.5"/>
+      <rect x="12" y="0" width="6"  height="10" fill="ZMD_COLOR" fill-opacity="0.65" stroke="#50ca50" stroke-width="0.5"/>
+      <rect x="18" y="0" width="6"  height="10" fill="ZDD_COLOR" fill-opacity="0.65" stroke="#ffff00" stroke-width="0.5"/>
+    </svg>
+    <span class="layer-label" data-ro="Zonare HG 2011" data-en="Zoning (HG 2011)">Zonare HG 2011</span>
   </div>
   <div class="layer-item active" data-layer="ROSCI0013" onclick="toggleLayer(this)">
     <div class="layer-toggle"></div>
-    <div class="layer-dash" style="border-color:#9b59b6;"></div>
+    <svg class="layer-dash layer-dash--area" width="24" height="10" viewBox="0 0 24 10" aria-hidden="true">
+      <rect x="1" y="1.5" width="22" height="7"
+            fill="#9b59b6" fill-opacity="0.15"
+            stroke="#9b59b6" stroke-width="2"
+            stroke-linejoin="round"/>
+    </svg>
     <span class="layer-label" data-ro="Sit Natura 2000" data-en="Natura 2000 Site">Sit Natura 2000</span>
   </div>
   <div class="layer-item" data-layer="theme_trails" onclick="toggleLayer(this)">
@@ -967,7 +972,7 @@
       },
       popup: (props) => {
         return `
-        <div class="popup-title">Limita UAT</div>
+        <div class="popup-title">UAT</div>
         ${props.name ? `<div class="popup-row"><span>Nume UAT</span><strong>${props.name}</strong></div>` : ''}
         ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
         `
@@ -984,7 +989,7 @@
       },
       popup: (props) => {
         return `
-        <div class="popup-title">Limita Județ</div>
+        <div class="popup-title">Județ</div>
         ${props.name ? `<div class="popup-row"><span>Nume Județ</span><strong>${props.name}</strong></div>` : ''}
         ${props.shape_area ? `<div class="popup-row"><span>Suprafață</span><strong>${Math.round(props.shape_area)} ha</strong></div>` : ''}
         `
